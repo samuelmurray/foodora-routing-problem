@@ -1,3 +1,7 @@
 # PyCharm
 /.idea
 
+# File endings
+*.xml
+*.iml
+*.pyc
