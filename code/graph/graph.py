@@ -26,9 +26,8 @@ class Graph:
         """ returns the edges in the graph """
         return self.__generate_edges()
 
-    def neighbours(self, node_id: int) -> Iterable[Node]:
+    def neighbours(self, node: Node) -> Iterable[Node]:
         """ return the neighbours of a node """
-        node = Node.node_by_id(node_id)
         if node is None:
             return None
         for neighbour in self.__graph_dict[node]:
@@ -50,7 +49,7 @@ class Graph:
         self.__add_edge(node2, node1)
 
     def __add_edge(self, node1: Node, node2: Node):
-        if node2 in self.__graph_dict[node1]:  # Don't add duplicate nodes
+        if node2 in self.__graph_dict[node1]:  # Don't add duplicate edges
             return
         if node1 in self.__graph_dict:
             self.__graph_dict[node1].append(node2)
@@ -76,12 +75,6 @@ class Graph:
         for edge in self.__generate_edges():
             res += "{" + edge[0].name() + "-" + edge[1].name() + "} "
         return res
-
-
-def distance(node1: Node, node2: Node): # Currently, it's up to the user to make sure that the nodes are neighbours
-    x1, y1 = node1.coordinates()
-    x2, y2 = node2.coordinates()
-    return math.sqrt(math.pow(x1 - x2, 2) + math.pow(y1 - y2, 2))
 
 
 def graph_from_json(json_data):

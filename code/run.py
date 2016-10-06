@@ -1,5 +1,6 @@
-from graph.graph import Graph, distance, graph_from_json
+from graph.graph import Graph, graph_from_json
 from graph.node import Node
+from graph.path_finder import *
 import json
 
 
@@ -30,6 +31,10 @@ if __name__ == '__main__':
         data = json.load(data_file)
         graph = graph_from_json(data)
     print(graph)
-    print(distance(Node.node_by_name("soder"), Node.node_by_name("vasastan")))
-    print(distance(Node.node_by_name("soder"), Node.node_by_name("gamlastan")))
-    print(distance(Node.node_by_name("gamlastan"), Node.node_by_name("soder")))
+    start = Node.node_by_name("soder")
+    goal = Node.node_by_name("vasastan")
+    path, cost = a_star_search(graph, start, goal)
+    for node in path:
+        print(node)
+    print()
+    print("Min cost to go from soder to vasastan is {cost}".format(cost=cost))
