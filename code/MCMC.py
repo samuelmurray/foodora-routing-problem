@@ -19,8 +19,8 @@ class Problem:
 
 
 class Sim_annSolver:
-    restaurant = 0
-    customer = 1
+    rest = 0
+    cust = 1
     biker = 2
     
     def __init__(self, data: Problem) -> None:
@@ -31,18 +31,21 @@ class Sim_annSolver:
         self.nrBikers       = data.nrBikers
         self.graph          = data.graph
         self.costMatrix     = -1 * np.ones((data.nrNodes, data.nrNodes))
-        self.nodeDicts      = [{}, {}, {}]
+        self.nodeDicts      = List[Dict[int, Node]]
+        self.orders         = dict(data.orders)
         self.nrOrders       = 0
-        self.solution       = {}
-        self.searchOrder    = []
+        for o in self.orders:
+            self.nodeDicts[0][self.nrOrders] = o[0]
+            self.nodeDicts[1][self.nrOrders] = o[1]
+            self.nrOrders += 1
+            
+        self.solution       = Dict[int, List[Tuple[int, int]]] 
+        self.costOfRoutes   = Dict[int, float]
+        self.searchOrder    = List[Tuple[int, int]] #bikers1, biker2
         for i in range(self.nrBikers):
-            self.solution[i] = []
             for j in range(i+1, self.nrBikers):
-                self.searchOrder.append((i, j))
-        
-        #self.searchOrderBikers  = np.random.permutation(self.nrBikers)
-        #self.searchOrderOrders  = np.random.permutation(self.)     
-        
+                self.searchOrder.append((i, j))   
+        return None
     
     def runSA() -> None:
         # Do initial heuristic solution, only vor variable number of bikers?
@@ -68,6 +71,27 @@ class Sim_annSolver:
         
         #check for stop
         return None
+    
+    def initializeSolution(self) -> None:
+        orders = range(self.nrOrders)
+        b = 0
+        while(len(orders) > 0):
+            o = orders.pop()
+            self.solution[b].append((rest, o))
+            self.solution[b].append((cust, o))
+            b += 1
+            b = b % self.nrBikers
+        for b in range(self.nrBikers):
+            self.costOfRoutes[b] = self.calcCostofRoute(self.solution[b])
+        return None
+            
+    def calcCostofRoute(self, route: List[Tuple[int, int]]) -> float:
+        cost = 0.0
+        for i in range(len(route) - 1):
+            node1 = nodeDicts[route[i][0]][route[i][1]]
+            node2 = nodeDicts[route[i + 1][0]][route[i + 1][1]]
+            cost += self.__getDistance(node1, node2)
+        return cost
         
     def lambdaInterchange(self) -> List[Dict[int, List]]:
         """This function implements a 1-interchange mechanism for a carrying 
@@ -106,7 +130,10 @@ class Sim_annSolver:
                         neighbourhood.append(dict(neighbour))
                     
         return neighbourhood
-        
+    
+    """WARNING The following functions determine how orders are transfered between 
+    bikers. These needs to be changed to account for capacity != 1 and 
+    lambda > 1. """
     def __01operator(self, biker1Route: List, biker2Route: List,
                       inx1: int, inx2: int) -> Tuple[List]:
         r = biker1Route.pop(inx1)
@@ -134,6 +161,8 @@ class Sim_annSolver:
         biker1Route.insert(inx1, c2)
         biker1Route.insert(inx1, r2)
         return biker1Route, biker2Route
+    
+    def evaluateCostofMove()
         
     def __getDistance(self, start: Node, goal: Node) -> float:
         # Check matrix
