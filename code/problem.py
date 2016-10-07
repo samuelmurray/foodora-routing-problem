@@ -58,7 +58,10 @@ class Problem:
 		    	out.write('edge' + e[0] + ' ' + e[1] + '\n')
 
 		    #out.write('rGotFoodFor ')
-		    #out.write('notHavFood ')
+		    
+		    for b in self.bikers:
+		        out.write('notHavFood ' + b + '\n')
+		    out.write('- biker\n')
 
 		    out.write('(:goal (and')
 		    for c in self.customer_orders.keys():
