@@ -24,6 +24,9 @@ class Node:
 
     def name(self) -> str:
         return self.__name
+        
+    def getID(self):
+        return self.__id
 
     @staticmethod
     def node_by_name(name: str):

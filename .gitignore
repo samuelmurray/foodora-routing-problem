@@ -5,3 +5,6 @@ code/.idea
 *.xml
 *.iml
 *.pyc
+
+#Cachefiles
+__pycache__/
