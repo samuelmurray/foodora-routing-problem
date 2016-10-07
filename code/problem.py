@@ -58,9 +58,9 @@ class Problem:
 		    	out.write('edge' + e[0] + ' ' + e[1] + '\n')
 
 		    #out.write('rGotFoodFor ')
-		    
+
 		    for b in self.bikers:
-		        out.write('notHavFood ' + b + '\n')
+		        out.write('(notHaveFood ' + b + ')\n')
 		    out.write('- biker\n')
 
 		    out.write('(:goal (and')
