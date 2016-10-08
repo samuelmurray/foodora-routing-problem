@@ -1,5 +1,5 @@
-(define (domain foodora_domain)
-  (:requirements :strips :typing :adl)
+(define (domain foodora_cost_domain)
+  (:requirements :strips :typing :adl :fluents :action-costs)
   
   (:types node restaurant customer biker)
   
@@ -12,11 +12,14 @@
 			   (notHaveFood ?biker)
 			   (gotFood ?customer))
 			   
+	(:functions (total-cost)
+                (distance ?node ?node)
+	)
 
   (:action move
     :parameters (?b - biker ?from - node ?to - node)
     :precondition (and (at-b ?b ?from) (edge ?from ?to))
-    :effect (and (not (at-b ?b ?from)) (at-b ?b ?to))
+    :effect (and (not (at-b ?b ?from)) (at-b ?b ?to) (increase (total-cost) (distance ?from ?to))) 
    )
 
   (:action pickUpFood
