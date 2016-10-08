@@ -7,7 +7,7 @@ Created on Fri Oct  7 15:43:36 2016
 from graph.node import Node
 from graph.graph import Graph
 import graph.path_finder as pf
-from typing import Dict, List, Iterable, Tuple
+from typing import Dict, List, Tuple, Set
 import numpy as np
 #from problem import Problem
     
@@ -69,10 +69,19 @@ class Sim_annSolver:
         
         return None
         
-    def runLambdaDescent() -> None:
-        	# Do initial heuristic solution, only vor variable number of bikers?
+    def runLambdaDescent(self) -> None:
+        # Do initial heuristic solution, only vor variable number of bikers?
+        self.initializeSolution()
+        # Now we have an initial self.solution
+        # and en initial self.costOfRoutes
         
         #lambda interchange + cost of move
+        neighbourhood = self.lambdaInterchange()
+        # Now we have a 1-interchange neighbourhood, a set of possible solutions
+        
+        #Here we do an ordered search of these solutions
+        #deltaCostOfSolution(): approximation of 
+        #                 costOfSolution(S') - costOfSolution(S)
         
         #apply acceptance criteria
         
@@ -103,14 +112,16 @@ class Sim_annSolver:
             node2 = self.nodeDicts[route[i + 1][0]][route[i + 1][1]]
             cost += self.__getDistance(node1, node2)
         return cost
-        
-    def lambdaInterchange(self) -> List[Dict[int, List]]:
+    
+    def lambdaInterchange(self) -> List[Set[Tuple[int, int]]]:
         """This function implements a 1-interchange mechanism for a carrying 
         capacity of 1 with 1 load per order.
         The function returns the a neighbourhood of solutions to the current 
         solution."""
         
-        neighbourhood = []
+        #neighbourhood = []
+        neighbourhood2 = List[List[Tuple[int, int]]]
+        neighbourhood2 = []
         for pair in self.searchOrder:
             biker1Route = list(self.solution[pair[0]])
             biker2Route = list(self.solution[pair[1]])
@@ -118,29 +129,34 @@ class Sim_annSolver:
             stop1       = len1 + 1 if len1 == 0 else len1
             len2        = len(biker2Route)
             stop2       = len2 + 1 if len2 == 0 else len2
+            #neighbour = dict(self.solution)
+            neighbour2 = Set[Tuple[int, int]]
+            neighbour2 = set()
             for inx1 in range(0, stop1, 2):
                 for inx2 in range(0, stop2, 2):
                     if(len1 > 0):
-                        neighbour = dict(self.solution)
-                        lists = self.__01operator(list(biker1Route), 
-                                                  list(biker2Route), inx1, inx2)
-                        neighbour[pair[0]] = list(lists[0])
-                        neighbour[pair[1]] = list(lists[1])
-                        neighbourhood.append(dict(neighbour))
+#                        lists = self.__01operator(list(biker1Route), 
+#                                                  list(biker2Route), inx1, inx2)
+#                        neighbour[pair[0]] = list(lists[0])
+#                        neighbour[pair[1]] = list(lists[1])
+#                        neighbourhood.append(dict(neighbour))
+                        neighbour2.add((inx1, -1))
                     if(len2 > 0):
-                        lists = self.__10operator(list(biker1Route), 
-                                                  list(biker2Route), inx1, inx2)
-                        neighbour[pair[0]] = list(lists[0])
-                        neighbour[pair[1]] = list(lists[1])
-                        neighbourhood.append(dict(neighbour))
+#                        lists = self.__10operator(list(biker1Route), 
+#                                                  list(biker2Route), inx1, inx2)
+#                        neighbour[pair[0]] = list(lists[0])
+#                        neighbour[pair[1]] = list(lists[1])
+#                        neighbourhood.append(dict(neighbour))
+                        neighbour2.add((-1, inx2))
                     if(len1 > 0 and len2 > 0):
-                        lists = self.__11operator(list(biker1Route), 
-                                                  list(biker2Route), inx1, inx2)
-                        neighbour[pair[0]] = list(lists[0])
-                        neighbour[pair[1]] = list(lists[1])
-                        neighbourhood.append(dict(neighbour))
-                    
-        return neighbourhood
+#                        lists = self.__11operator(list(biker1Route), 
+#                                                  list(biker2Route), inx1, inx2)
+#                        neighbour[pair[0]] = list(lists[0])
+#                        neighbour[pair[1]] = list(lists[1])
+#                        neighbourhood.append(dict(neighbour))
+                        neighbour2.add((inx1, inx2))
+            neighbourhood2.append(neighbour2)
+        return neighbourhood2
     
     """WARNING The following functions determine how orders are transfered between 
     bikers. These needs to be changed to account for capacity != 1 and 
@@ -173,7 +189,16 @@ class Sim_annSolver:
         biker1Route.insert(inx1, r2)
         return biker1Route, biker2Route
     
-    #def evaluateCostofMove()
+#    def getCostInsDelProcedure(self, :
+#        oldCost = self.costOfRoutes[bikeNr]
+#        newCost = 0.0
+#        for 
+        
+    def getDeltaCostSoulutionA(self, 
+                               newSolution: Dict[int, List[Tuple[int, int]]]):
+        deltaCost = 0.0
+        for b in range(self.nrBikers):
+            deltaCost += self.getCostInsDelProcedure(newSolution[b], b, )
         
     def __getDistance(self, start: Node, goal: Node) -> float:
         # Check matrix
@@ -191,10 +216,10 @@ class Sim_annSolver:
 if __name__ == "__main__":
     data = Problem(3)
     simulator = Sim_annSolver(data)
-    simulator.initializeSolution()
-    #simulator.solution[0] = [1, 2, 3, 4]
-    #simulator.solution[1] = [5, 6]
-    #simulator.solution[2] = [7, 8]
-#    neighbourhood = simulator.lambdaInterchange()
+ #   simulator.initializeSolution()
+    simulator.solution[0] = [1, 2, 3, 4]
+    simulator.solution[1] = [5, 6]
+    simulator.solution[2] = [7, 8]
+    neighbourhood = simulator.lambdaInterchange()
 #    for o in neighbourhood:
 #        print(o)
