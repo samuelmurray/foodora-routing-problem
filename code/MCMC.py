@@ -16,33 +16,40 @@ class Problem:
         self.nrNodes = 5
         self.nrBikers = nrBikers
         self.graph = Graph()
+        self.orders = dict()
+        for i in range(4):
+            self.orders[i] = (Node(0.5*i, 0.5*i), Node(-0.5*i, -0.5*i))
 
 
 class Sim_annSolver:
-    rest = 0
-    cust = 1
-    biker = 2
+    REST = 0
+    CUST = 1
     
     def __init__(self, data: Problem) -> None:
         """ Read in the problem data and store of use."""
         #Take the order dict and make a List of tuples. The first
-        # index is typ type, "biker", "rest" or "cust"
+        # index is typ type, "biker", "REST" or "CUST"
         self.nrNodes        = data.nrNodes
         self.nrBikers       = data.nrBikers
         self.graph          = data.graph
         self.costMatrix     = -1 * np.ones((data.nrNodes, data.nrNodes))
         self.nodeDicts      = List[Dict[int, Node]]
+        self.nodeDicts      = [dict(), dict()]
         self.orders         = dict(data.orders)
         self.nrOrders       = 0
-        for o in self.orders:
-            self.nodeDicts[0][self.nrOrders] = o[0]
-            self.nodeDicts[1][self.nrOrders] = o[1]
+        print(self.orders)
+        for o in range(len(self.orders)):
+            self.nodeDicts[0][self.nrOrders] = self.orders[o][0]
+            self.nodeDicts[1][self.nrOrders] = self.orders[o][1]
             self.nrOrders += 1
             
         self.solution       = Dict[int, List[Tuple[int, int]]] 
+        self.solution       = dict()
         self.costOfRoutes   = Dict[int, float]
         self.searchOrder    = List[Tuple[int, int]] #bikers1, biker2
+        self.searchOrder    = []
         for i in range(self.nrBikers):
+            self.solution[i] = []
             for j in range(i+1, self.nrBikers):
                 self.searchOrder.append((i, j))   
         return None
@@ -73,12 +80,15 @@ class Sim_annSolver:
         return None
     
     def initializeSolution(self) -> None:
-        orders = range(self.nrOrders)
+        """Creates and initial feasible solution. Takes all the orders and 
+        distributes them roughly equal among the bikers. Every biker goes 
+        directly from the restaurant to the customer."""
+        orders = list(range(self.nrOrders))
         b = 0
         while(len(orders) > 0):
             o = orders.pop()
-            self.solution[b].append((rest, o))
-            self.solution[b].append((cust, o))
+            self.solution[b].append((self.REST, o))
+            self.solution[b].append((self.CUST, o))
             b += 1
             b = b % self.nrBikers
         for b in range(self.nrBikers):
@@ -86,10 +96,11 @@ class Sim_annSolver:
         return None
             
     def calcCostofRoute(self, route: List[Tuple[int, int]]) -> float:
+        """Calclulates the total time cost of a route. """
         cost = 0.0
         for i in range(len(route) - 1):
-            node1 = nodeDicts[route[i][0]][route[i][1]]
-            node2 = nodeDicts[route[i + 1][0]][route[i + 1][1]]
+            node1 = self.nodeDicts[route[i][0]][route[i][1]]
+            node2 = self.nodeDicts[route[i + 1][0]][route[i + 1][1]]
             cost += self.__getDistance(node1, node2)
         return cost
         
@@ -162,7 +173,7 @@ class Sim_annSolver:
         biker1Route.insert(inx1, r2)
         return biker1Route, biker2Route
     
-    def evaluateCostofMove()
+    #def evaluateCostofMove()
         
     def __getDistance(self, start: Node, goal: Node) -> float:
         # Check matrix
@@ -180,9 +191,10 @@ class Sim_annSolver:
 if __name__ == "__main__":
     data = Problem(3)
     simulator = Sim_annSolver(data)
-    simulator.solution[0] = [1, 2, 3, 4]
+    simulator.initializeSolution()
+    #simulator.solution[0] = [1, 2, 3, 4]
     #simulator.solution[1] = [5, 6]
     #simulator.solution[2] = [7, 8]
-    neighbourhood = simulator.lambdaInterchange()
-    for o in neighbourhood:
-        print(o)
+#    neighbourhood = simulator.lambdaInterchange()
+#    for o in neighbourhood:
+#        print(o)
