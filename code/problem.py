@@ -1,22 +1,20 @@
-
-from graph import graph
+from typing import Dict, List, Iterable, Tuple
+from graph.graph import Graph
+import graph.path_finder as pf
 
 
 class Problem:
-	def __init__(self.graph: graph, init_state: dict, goal_state: dict, bikers: list, restaurants: list, customer_orders: list):
+	def __init__(self.graph: Graph, goal_state: dict, bikers: dict, restaurants: dict, customers: dict, orders: dict):
 		self.graph = graph
-		self.init_state = init_state
 		self.goal_state = goal_state
 		self.bikers = bikers
 		self.restaurants = restaurants
-		self.customer_orders = customer_orders
+		self.customers = customers
+		self.orders = orders
 
 	
 	def get_graph():
 		return self.graph
-
-	def get_init_state():
-		return self.init_state
 
 	def get_goal_state():
 		return self.goal_state
@@ -28,48 +26,52 @@ class Problem:
 		return self.restaurants
 
 	def get_customer_orders():
-		return self.customer_orders
+		return self.orders
 
 	def make_pddl():
+
 		with open('pddl_init.ppdl', 'w') as out:
-		    out.write('(define (problem ppdl_init)\n (:domain foodora_domain)\n (:objects ')
-		    for c in self.customer_orders.keys():
-		        out.write(c + ' ')
-		    out.write('- customer\n')
-		    for r in self.restaurants:
-		        out.write(r + ' ')
-		    out.write('- restaurant\n')
-		    for b in self.bikers:
+		    out.write('(define (problem test_problem_cost)\n\t(:domain foodora_cost_domain)\n\t(:objects ')
+		    for c in self.customers.keys():
+		        out.write(c[1] + ' ')
+		    out.write('- customer\n\t\t\t\t\t')
+		    for r in self.restaurants.keys():
+		        out.write(r[0] + ' ')
+		    out.write('- restaurant\n\t\t\t\t\t')
+		    for b in self.bikers.keys():
 		        out.write(b + ' ')
-		    out.write('- biker\n')
-		    for n in self.graph.nodes():
+		    out.write('- biker\n\t\t\t\t\t')
+		    for n in self.graph.nodes(): 
 		        out.write(n.name() + ' ')
 		        out.write('- node)\n')
 
-		    out.write('(:init\n')
+		    out.write('\t(:init\n (= (total-cost) 0)\n')
 
-		    #Improve when I understand structure on init_state
-
-		    for c in self.customer_orders.keys():
-				out.write('at-c ' + c)
-		    for r in self.restaurants:
-				out.write('at-r ' + r)
+		    for c_id, c_n in self.customers.items():
+				out.write('\t(at-c ' + c_id + ' ' + c_n + ')\n')
+		    for r_id, r_n in self.restaurants.items():
+				out.write('\t(at-r ' + r_id + ' ' + r_n + ')\n')
 		    for e in self.graph.edges():
-		    	out.write('edge' + e[0] + ' ' + e[1] + '\n')
+		    	out.write('\t(edge' + e[0] + ' ' + e[1] + ')\n')
 
-		    #out.write('rGotFoodFor ')
+		    for e2 in self.graph.edges():
+		    	out.write('\t(= distance ' + e2[0] + ' ' + e2[1] + ') ' + pf.distance(e2[0], e2[1]) + ')\n')
 
-		    for b in self.bikers:
-		        out.write('(notHaveFood ' + b + ')\n')
-		    out.write('- biker\n')
+		    for b_id, b_n in self.bikers.values():
+		        out.write('\t(at-b' + b_id + ' ' + b_n ')\n')
 
-		    out.write('(:goal (and')
-		    for c in self.customer_orders.keys():
-				out.write(' (gotFood ' + c + ')')
-			out.write('))\n)')
+		    for o in self.orders.values():
+		    	out.write('\t(rGotFoodFor ' + o[0] + ' ' + o[1] + ')\n')
 
+		    for b2 in self.bikers.keys():
+		        out.write('\t(notHaveFood ' + b3 + ')\n')
+		    out.write(')\n')
 
+		    out.write('\t(:goal (and')
+		    for c2 in self.customers.keys():
+				out.write(' (gotFood ' + c2 + ')')
+			out.write('))\n\n\t(:metric minimize (total-cost))\n)')
 
-
-
+	'''TODO? def read_pddl_solution():
+	'''
 
