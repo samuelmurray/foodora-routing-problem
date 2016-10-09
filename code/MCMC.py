@@ -9,6 +9,7 @@ from graph.graph import Graph
 import graph.path_finder as pf
 from typing import Dict, List, Tuple, Set
 import numpy as np
+from warnings import warn
 #from problem import Problem
     
 class Problem:
@@ -114,7 +115,8 @@ class Sim_annSolver:
         return cost
     
     def lambdaInterchange(self) -> List[Set[Tuple[int, int]]]:
-        """This function implements a 1-interchange mechanism for a carrying 
+        """WARNING: This function assumes R,C pairs.
+        This function implements a 1-interchange mechanism for a carrying 
         capacity of 1 with 1 load per order.
         The function returns the a neighbourhood of solutions to the current 
         solution."""
@@ -189,10 +191,69 @@ class Sim_annSolver:
         biker1Route.insert(inx1, r2)
         return biker1Route, biker2Route
     
-#    def getCostInsDelProcedure(self, :
-#        oldCost = self.costOfRoutes[bikeNr]
-#        newCost = 0.0
-#        for 
+    def getCostInsDelProcedure(self, bikerPair: Tuple[int, int], 
+                               move: Tuple[int, int]) -> float:
+        """WARNING this functions assumes R,C pairs """
+        b1 = bikerPair[0]
+        b2 = bikerPair[1]
+        if(move[0] > -1 and move[1] > -1):
+            routes = [list(self.solution[b1]), list(self.solution[b2])]
+            r = [routes[0].pop(move[0]), routes[1].pop(move[1])]
+            c = [routes[0].pop(move[0]), routes[1].pop(move[1])]
+            lmin = np.inf
+            cost = 0.0
+            for n1 in range(2):
+                n2 = (n1 + 1) % 2
+                rest = r[n2]
+                cust = c[n2]
+                for i in range(0, len(routes[n1]), 2):
+                    l = self.__calcL(routes[n1], i, rest, cust)
+                    if l < lmin:
+                        lmin = l
+                cost += lmin
+        else:
+            if move[1] == -1:
+                (von, nach) = (b1, b2)
+                inx         = move[0]
+            else:
+                (von, nach) = (b2, b1)
+                inx         = move[1]
+            routeVon    = list(self.solution[von])
+            routeNach   = list(self.solution[nach])
+            r = routeVon.pop(inx)
+            c = routeVon.pop(inx)
+            deletionCost = -1 * self.__calcL(routeVon, inx, r, c)
+            lmin = np.inf
+            for i in range(0, len(routeNach), 2):
+                l = self.__calcL(routeNach, i, r, c)
+                if l < lmin:
+                    lmin = l            
+            cost = deletionCost + lmin
+
+               
+        return cost
+    
+    def __calcL(self, route: List[Tuple[int, int]], inx: int, 
+                rest: Tuple[int, int], cust: Tuple[int, int]) -> float:
+        l = 0.0
+        if inx > 1:
+            order1 = self.route[inx - 1]
+            if order1[0] != 1:
+                warn("Some thing is wrong! Trying to insert after R.")
+            l += self.__getDistance(self.nodeDicts[order1[0]][order1[1]],
+                                    self.nodeDicts[rest[0]][rest[1]])
+        l += self.__getDistance(self.nodeDicts[rest[0]][rest[1]],
+                                self.nodeDicts[cust[0]][cust[1]])
+        if inx < len(route) - 1:
+            order2 = self.route[inx]
+            if order2[0] != 0:
+                warn("Some thing is wrong! Trying to insert before C.")
+            l += self.__getDistance(self.nodeDicts[cust[0]][cust[1]],
+                                    self.nodeDicts[order2[0]][order2[1]])
+        if inx > 1 and inx < len(route) - 1:
+            l -= self.__getDistance(self.nodeDicts[order1[0]][order1[1]], 
+                                    self.nodeDicts[order2[0]][order2[1]])
+        return l
         
     def getDeltaCostSoulutionA(self, 
                                newSolution: Dict[int, List[Tuple[int, int]]]):
@@ -217,9 +278,10 @@ if __name__ == "__main__":
     data = Problem(3)
     simulator = Sim_annSolver(data)
  #   simulator.initializeSolution()
-    simulator.solution[0] = [1, 2, 3, 4]
-    simulator.solution[1] = [5, 6]
-    simulator.solution[2] = [7, 8]
+    simulator.solution[0] = [(0,0), (1,0), (0,1), (1,1)]
+    simulator.solution[1] = [(0,2), (1,2)]
+    simulator.solution[2] = [(0,3), (1,3)]
     neighbourhood = simulator.lambdaInterchange()
+    simulator.getCostInsDelProcedure((0, 1), (0, 0))
 #    for o in neighbourhood:
 #        print(o)
