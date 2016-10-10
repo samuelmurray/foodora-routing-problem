@@ -10,9 +10,9 @@ import graph.path_finder as pf
 from typing import Dict, List, Tuple, Set
 import numpy as np
 from warnings import warn
-#from problem import Problem
+from problem import Problem
 
-
+"""
 class Problem:
     def __init__(self, nrBikers) -> None:
         self.nrNodes = 5
@@ -20,7 +20,7 @@ class Problem:
         self.graph = Graph()
         self.orders = dict()
         for i in range(10):
-            self.orders[i] = (Node(0.5 * i, 0.5 * i), Node(-0.5 * i, -0.5 * i))
+            self.orders[i] = (Node(0.5 * i, 0.5 * i), Node(-0.5 * i, -0.5 * i))"""
 
 
 class Sim_annSolver:
@@ -35,13 +35,14 @@ class Sim_annSolver:
         """ Read in the problem data and store of use."""
         # Take the order dict and make a List of tuples. The first
         # index is typ type, "biker", "REST" or "CUST"
-        self.nrNodes        = data.nrNodes
-        self.nrBikers       = data.nrBikers
-        self.graph          = data.graph
-        self.costMatrix     = -1 * np.ones((data.nrNodes, data.nrNodes))
+        self.bikerStart     = dict(data.get_bikers())
+        self.nrBikers       = len(data.nrBikers) 
+        self.graph          = data.get_graph()
+        self.nrNodes        = self.graph.node_count()
+        self.costMatrix     = -1 * np.ones((self.nrNodes, self.nrNodes))
         self.nodeDicts      = [dict(), dict()]  # type: List[Dict[int, Node]]
         self.orders         = dict(data.orders)
-        self.bikerStart     = dict(data.bikerStart)
+        
         self.nrOrders       = 0
         for o in range(len(self.orders)):
             self.nodeDicts[0][self.nrOrders] = self.orders[o][0]
@@ -426,23 +427,18 @@ class Sim_annSolver:
     def __getDistance(self, start: Node, goal: Node) -> float:
         """Calculates the cost of travelning between 2 nodes. Once done, the 
         value is stored in a matix so A* not needed to be run again.""" 
-        # Check matrix
-        # Otherwise calc distance and add to matrix
-        return 1.0
-        #distance = 0.0
-        """if self.costMatrix[start.get_id(), goal.get_id()] > -1:
+        distance = 0.0
+        if self.costMatrix[start.get_id(), goal.get_id()] > -1:
             distance = self.costMatrix[start.get_id(), goal.get_id()]
         else:
             distance = pf.a_star_search(self.graph, start, goal)
             self.costMatrix[start.get_id(), goal.get_id()] = distance
             self.costMatrix[goal.get_id(), start.get_id()] = distance
-        return distance"""
+        return distance
 
-
-if __name__ == "__main__":
-    data = Problem(3)
-    simulator = Sim_annSolver(data)
-    simulator.runSA()
+#if __name__ == "__main__":
+#    simulator = Sim_annSolver(data)
+#    simulator.runSA()
     #   simulator.initializeSolution()
     #    simulator.solution[0] = [(0,0), (1,0), (0,1), (1,1)]
     #    simulator.solution[1] = [(0,2), (1,2), (0,3), (1,3)]
