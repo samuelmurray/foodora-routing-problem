@@ -2,6 +2,7 @@ from graph.graph import Graph
 from json_parser import *
 from graph.node import Node
 from graph.path_finder import *
+from problem import Problem
 import json
 
 
@@ -42,6 +43,9 @@ def test_astar():
 
 
 if __name__ == '__main__':
+    with open("data/graph.json") as data_file:
+        data = json.load(data_file)
+        graph = graph_from_json(data)
     with open("data/orders.json") as data_file:
         data = json.load(data_file)
         orders = orders_from_json(data)
@@ -54,3 +58,6 @@ if __name__ == '__main__':
     print("ORDERS")
     for key in orders.keys():
         print("Id: {id}. (From, To): {nodes}".format(id=key, nodes=orders[key]))
+
+    problem = Problem(graph, bikers, orders)
+    problem.make_pddl()
