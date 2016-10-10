@@ -1,8 +1,9 @@
 from graph.graph import Graph
 from graph.node import Node
+from typing import Dict, Tuple
 
 
-def graph_from_json(json_data):
+def graph_from_json(json_data) -> Graph:
     graph = Graph()
     keys = json_data.keys()  # type: str
     for key in keys:
@@ -16,13 +17,19 @@ def graph_from_json(json_data):
     return graph
 
 
-def orders_from_json(json_data):
+def orders_from_json(json_data) -> Dict[int, Tuple[Node, Node]]:
     orders = {}
     keys = json_data.keys()  # type: str
-    # TODO
+    for i, key in enumerate(keys):
+        from_node = json_data[key]["from"]
+        to_node = json_data[key]["to"]
+        orders[i] = (from_node, to_node)
+    return orders
 
 
-def bikers_from_json(json_data):
+def bikers_from_json(json_data) -> Dict[int, Node]:
     bikers = {}
     keys = json_data.keys()  # type: str
-    # TODO
+    for i, key in enumerate(keys):
+        bikers[i] = (json_data[key])
+    return bikers
