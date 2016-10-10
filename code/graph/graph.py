@@ -16,13 +16,22 @@ class Graph:
             graph_dict = {}
         self.__graph_dict = graph_dict
 
-    def nodes(self) -> Iterable(Node):
+    def nodes(self) -> List[Node]:
         """ returns the nodes in the graph """
         return list(self.__graph_dict.keys())
 
+    def node_count(self) -> int:
+        len(self.__graph_dict)
+
     def edges(self) -> Iterable[Tuple[Node]]:
-        """ returns the edges in the graph """
-        return self.__generate_edges()
+        """ A method generating the edges of the graph. Edges are represented as tuples of two nodes. """
+        edges = []
+        for node in self.__graph_dict.keys():
+            for neighbour in self.__graph_dict[node]:
+                # Since all edges go both ways, we need only return one of them.
+                if {neighbour, node} not in edges:
+                    edges.append({node, neighbour})
+                    yield (node, neighbour)
 
     def neighbours(self, node: Node) -> Iterable[Node]:
         """ return the neighbours of a node """
@@ -30,9 +39,6 @@ class Graph:
             return None
         for neighbour in self.__graph_dict[node]:
             yield neighbour
-
-    def node_count(self) -> int:
-        len(self.__graph_dict)
 
     def add_node(self, node: Node):
         """ If the node "node" is not in
@@ -56,21 +62,11 @@ class Graph:
         else:
             self.__graph_dict[node1] = [node2]
 
-    def __generate_edges(self) -> Iterable[Tuple[Node, Node]]:
-        """ A method generating the edges of the graph. Edges are represented as tuples of two nodes. """
-        edges = []
-        for node in self.__graph_dict.keys():
-            for neighbour in self.__graph_dict[node]:
-                # Since all edges go both ways, we need only return one of them.
-                if {neighbour, node} not in edges:
-                    edges.append({node, neighbour})
-                    yield (node, neighbour)
-
     def __str__(self) -> str:
         res = "nodes: "
         for k in self.__graph_dict.keys():
             res += str(k) + " "
         res += "\nedges: "
-        for edge in self.__generate_edges():
+        for edge in self.edges():
             res += "{" + edge[0].name() + "-" + edge[1].name() + "} "
         return res
