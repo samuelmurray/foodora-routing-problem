@@ -4,13 +4,12 @@ import graph.path_finder as pf
 
 
 class Problem:
-	def __init__(self.graph: Graph, goal_state: dict, bikers: dict, restaurants: dict, customers: dict, orders: dict):
+	def __init__(self, graph: Graph, bikers: dict, orders: dict):
 		self.graph = graph
-		self.goal_state = goal_state
 		self.bikers = bikers
-		self.restaurants = restaurants
-		self.customers = customers
-		self.orders = orders
+		self.orders = orders # Dict[int, Tuple[Node, Node]]
+		self.restaurants = make_restaurants_list(self.orders)
+		self.customers = make_customer_list(self.orders)
 
 	
 	def get_graph():
@@ -27,6 +26,21 @@ class Problem:
 
 	def get_customer_orders():
 		return self.orders
+
+	def make_customer_list(orders: dict):
+		customers = {}
+		index_cust = 1
+		for tup in orders:
+			customers[index_cust] = tup[1];
+			index_cust += 1
+
+	def make_restaurants_list(orders: dict):
+		restaurants = {}
+		index_rest = 1
+		for tup in orders:
+			restaurants[index_rest] = tup[0];
+			index_rest += 1
+
 
 	def make_pddl():
 
