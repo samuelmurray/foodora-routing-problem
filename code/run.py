@@ -7,28 +7,6 @@ import json
 from MCMC import SimulatedAnnealing
 
 
-def example_graph():
-    graph = Graph()
-    oster = Node(1, 2)
-    soder = Node(3, 2)
-    norr = Node(5, 4)
-    graph.add_node(oster)
-    graph.add_node(soder)
-    graph.add_node(norr)
-    graph.add_edge(oster, soder)
-    graph.add_edge(norr, oster)
-    edges = graph.edges()
-
-    print(graph)
-    print()
-    for neighbour in graph.neighbours(0):
-        print(neighbour)
-    for neighbour in graph.neighbours(1):
-        print(neighbour)
-    for neighbour in graph.neighbours(2):
-        print(neighbour)
-
-
 def test_astar():
     with open("data/graph.json") as data_file:
         data = json.load(data_file)
@@ -53,6 +31,12 @@ if __name__ == '__main__':
     with open("data/bikers.json") as data_file:
         data = json.load(data_file)
         bikers = bikers_from_json(data)
+    print("GRAPH")
+    for node in graph.nodes():
+        print("\nNode {} has the following neighbours:".format(node.name()))
+        for neighbour in graph.neighbours(node):
+            print(neighbour.name())
+
     print("BIKERS")
     for key in bikers.keys():
         print("Id: {id}. Location: {node}".format(id=key, node=bikers[key].name()))
@@ -63,9 +47,12 @@ if __name__ == '__main__':
                                                                   to_node=orders[key][1].name()))
     
     problem = Problem(graph, bikers, orders)
+
     solver = SimulatedAnnealing(problem, True)
     solver.runSA()
     print("Found solution: ", solver.bestSolution)
     print("Solution cost: ", solver.bestCost)
     print("Cost for all bikers: ", solver.bestCostOfRoutes)
-    #problem.make_pddl()
+    
+    problem.make_pddl()
+

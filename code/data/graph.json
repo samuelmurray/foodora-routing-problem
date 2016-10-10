@@ -1,34 +1,279 @@
 {
-  "soder": {
-    "x": 5,
+  "bromma": {
+    "x": 1,
+    "y": 5,
+    "neighbours": [
+      "traneberg",
+      "alvik",
+      "alsten"
+    ]
+  },
+  "alsten": {
+    "x": 2,
+    "y": 7,
+    "neighbours": [
+      "bromma",
+      "alvik"
+    ]
+  },
+  "traneberg": {
+    "x": 4,
     "y": 3,
     "neighbours": [
-      "gamlastan"
+      "bromma",
+      "alvik"
     ]
   },
-  "gamlastan": {
-    "x": 2,
-    "y": 1,
+  "alvik": {
+    "x": 4,
+    "y": 5,
     "neighbours": [
-      "soder",
-      "vasastan",
-      "ostermalm"
+      "storaessingen",
+      "kristineberg"
     ]
   },
-  "vasastan": {
+  "storaessingen": {
     "x": 5,
-    "y": 1,
+    "y": 7,
     "neighbours": [
-      "gamlastan",
+      "lillaessingen",
+      "aspudden",
+      "liljeholmen"
+    ]
+  },
+  "lillaessingen": {
+    "x": 6,
+    "y": 6,
+    "neighbours": [
+      "storaessingen",
+      "marieberg"
+    ]
+  },
+  "kristineberg": {
+    "x": 6,
+    "y": 4,
+    "neighbours": [
+      "alvik",
+      "marieberg"
+    ]
+  },
+  "marieberg": {
+    "x": 7,
+    "y": 5,
+    "neighbours": [
+      "kungsholmen",
+      "kristineberg",
+      "langholmen"
+    ]
+  },
+  "kungsholmen": {
+    "x": 9,
+    "y": 5,
+    "neighbours": [
+      "marieberg",
+      "vasastaden",
+      "norrmalm"
+    ]
+  },
+  "vasastaden": {
+    "x": 10,
+    "y": 2,
+    "neighbours": [
+      "kungsholmen",
+      "norrmalm",
       "ostermalm"
     ]
   },
   "ostermalm": {
-    "x": 1,
+    "x": 13,
     "y": 4,
     "neighbours": [
-      "vasastan",
+      "hjorthagen",
+      "gardet",
+      "djurgarden",
+      "norrmalm",
+      "vasastaden"
+    ]
+  },
+  "hjorthagen": {
+    "x": 14,
+    "y": 1,
+    "neighbours": [
+      "ostermalm",
+      "gardet"
+    ]
+  },
+  "gardet": {
+    "x": 15,
+    "y": 3,
+    "neighbours": [
+      "hjorthagen",
+      "djurgarden",
+      "ostermalm"
+    ]
+  },
+  "djurgarden": {
+    "x": 14,
+    "y": 6,
+    "neighbours": [
+      "gardet",
+      "ostermalm"
+    ]
+  },
+  "norrmalm": {
+    "x": 11,
+    "y": 5,
+    "neighbours": [
+      "ostermalm",
+      "vasastaden",
+      "kungsholmen",
       "gamlastan"
+    ]
+  },
+  "gamlastan": {
+    "x": 12,
+    "y": 6,
+    "neighbours": [
+      "norrmalm",
+      "slussen"
+    ]
+  },
+  "slussen": {
+    "x": 12,
+    "y": 7,
+    "neighbours": [
+      "gamlastan",
+      "hornstull",
+      "skanstull",
+      "sofia"
+    ]
+  },
+  "sofia": {
+    "x": 14,
+    "y": 8,
+    "neighbours": [
+      "slussen",
+      "skanstull",
+      "sickla"
+    ]
+  },
+  "sickla": {
+    "x": 15,
+    "y": 9,
+    "neighbours": [
+      "hammarby",
+      "sofia"
+    ]
+  },
+  "hammarby": {
+    "x": 14,
+    "y": 10,
+    "neighbours": [
+      "sickla",
+      "gullmarsplan"
+    ]
+  },
+  "gullmarsplan": {
+    "x": 13,
+    "y": 10,
+    "neighbours": [
+      "arsta",
+      "hammarby",
+      "skanstull"
+    ]
+  },
+  "skanstull": {
+    "x": 12,
+    "y": 9,
+    "neighbours": [
+      "sofia",
+      "slussen",
+      "gullmarsplan",
+      "hornstull"
+    ]
+  },
+  "hornstull": {
+    "x": 9,
+    "y": 7,
+    "neighbours": [
+      "skanstull",
+      "slussen",
+      "langholmen",
+      "liljeholmen"
+    ]
+  },
+  "langholmen": {
+    "x": 8,
+    "y": 6,
+    "neighbours": [
+      "hornstull",
+      "marieberg"
+    ]
+  },
+  "arsta": {
+    "x": 11,
+    "y": 10,
+    "neighbours": [
+      "gullmarsplan",
+      "vastberga",
+      "liljeholmen"
+    ]
+  },
+  "vastberga": {
+    "x": 7,
+    "y": 11,
+    "neighbours": [
+      "arsta",
+      "alvsjo",
+      "vastertorp",
+      "aspudden",
+      "liljeholmen"
+    ]
+  },
+  "alvsjo": {
+    "x": 7,
+    "y": 13,
+    "neighbours": [
+      "vastberga",
+      "vastertorp"
+    ]
+  },
+  "vastertorp": {
+    "x": 3,
+    "y": 11,
+    "neighbours": [
+      "alvsjo",
+      "vastberga",
+      "hagersten"
+    ]
+  },
+  "hagersten": {
+    "x": 3,
+    "y": 9,
+    "neighbours": [
+      "vastertorp",
+      "aspudden"
+    ]
+  },
+  "aspudden": {
+    "x": 5,
+    "y": 9,
+    "neighbours": [
+      "hagersten",
+      "vastberga",
+      "liljeholmen",
+      "storaessingen"
+    ]
+  },
+  "liljeholmen": {
+    "x": 8,
+    "y": 8,
+    "neighbours": [
+      "hornstull",
+      "storaessingen",
+      "aspudden",
+      "arsta",
+      "vastberga"
     ]
   }
 }
