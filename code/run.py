@@ -48,4 +48,4 @@ if __name__ == '__main__':
 
     problem = Problem(graph, bikers, orders)
     solver = SimulatedAnnealing(problem)
-    #problem.make_pddl()
+    problem.make_pddl()
