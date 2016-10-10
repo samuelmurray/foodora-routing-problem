@@ -61,24 +61,24 @@ class Problem:
             for r_id, r_n in self.restaurants.items():
                 out.write('\t(at-r ' + str(r_id) + ' ' + str(r_n) + ')\n')
             for e in self.graph.edges():
-                out.write('\t(edge' + e[0] + ' ' + e[1] + ')\n')
+                out.write('\t(edge' + e[0].name() + ' ' + e[1].name() + ')\n')
 
             for e2 in self.graph.edges():
-                out.write('\t(= distance ' + e2[0] + ' ' + e2[1] + ') ' + pf.distance(e2[0], e2[1]) + ')\n')
+                out.write('\t(= distance ' + e2[0].name() + ' ' + e2[1].name() + ') ' + str(pf.distance(e2[0], e2[1])) + ')\n')
 
             for b_id, b_n in self.bikers.values():
-                out.write('\t(at-b' + b_id + ' ' + b_n + ')\n')
+                out.write('\t(at-b' + str(b_id) + ' ' + b_n.name() + ')\n')
 
                 for o in self.orders.values():
-                    out.write('\t(rGotFoodFor ' + o[0] + ' ' + o[1] + ')\n')
+                    out.write('\t(rGotFoodFor ' + str(o[0]) + ' ' + str(o[1]) + ')\n')
 
                 for b2 in self.bikers.keys():
-                    out.write('\t(notHaveFood ' + b2 + ')\n')
+                    out.write('\t(notHaveFood ' + str(b2) + ')\n')
                 out.write(')\n')
 
                 out.write('\t(:goal (and')
                 for c2 in self.customers.keys():
-                    out.write(' (gotFood ' + c2 + ')')
+                    out.write(' (gotFood ' + str(c2) + ')')
                 out.write('))\n\n\t(:metric minimize (total-cost))\n)')
 
         '''TODO? def read_pddl_solution():
