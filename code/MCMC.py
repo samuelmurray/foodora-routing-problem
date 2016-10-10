@@ -12,17 +12,6 @@ import numpy as np
 from warnings import warn
 from problem import Problem
 
-"""
-class Problem:
-    def __init__(self, nrBikers) -> None:
-        self.nrNodes = 5
-        self.nrBikers = nrBikers
-        self.graph = Graph()
-        self.orders = dict()
-        for i in range(10):
-            self.orders[i] = (Node(0.5 * i, 0.5 * i), Node(-0.5 * i, -0.5 * i))"""
-
-
 class Sim_annSolver:
     """This class contains all the method to solve the foodora VRP. Several 
     functions assume R,C pair. That is, it is assumed the biker goes straight 
