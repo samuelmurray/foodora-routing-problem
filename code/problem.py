@@ -39,7 +39,7 @@ class Problem:
         return customers
 
     def make_pddl(self):
-        with open('pddl_init.ppdl', 'w') as out:
+        with open('data/pddl_init.ppdl', 'w') as out:
             out.write('(define (problem test_problem_cost)\n\t(:domain foodora_cost_domain)\n\t(:objects ')
             for c in self.customers.keys():
                 out.write(str(c) + ' ')
