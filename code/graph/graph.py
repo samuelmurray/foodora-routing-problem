@@ -21,7 +21,7 @@ class Graph:
         return list(self.__graph_dict.keys())
 
     def node_count(self) -> int:
-        len(self.__graph_dict)
+        return len(self.__graph_dict)
 
     def edges(self) -> Iterable[Tuple[Node]]:
         """ A method generating the edges of the graph. Edges are represented as tuples of two nodes. """

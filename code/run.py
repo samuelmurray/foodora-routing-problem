@@ -4,6 +4,7 @@ from graph.node import Node
 from graph.path_finder import *
 from problem import Problem
 import json
+from MCMC import SimulatedAnnealing
 
 
 def example_graph():
@@ -62,4 +63,5 @@ if __name__ == '__main__':
                                                                   to_node=orders[key][1].name()))
 
     problem = Problem(graph, bikers, orders)
-    problem.make_pddl()
+    solver = SimulatedAnnealing(problem)
+    #problem.make_pddl()

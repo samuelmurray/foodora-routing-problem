@@ -12,7 +12,7 @@ import numpy as np
 from warnings import warn
 from problem import Problem
 
-class Sim_annSolver:
+class SimulatedAnnealing:
     """This class contains all the method to solve the foodora VRP. Several 
     functions assume R,C pair. That is, it is assumed the biker goes straight 
     from the restaurant to the customer without pick up of any other food. To 
