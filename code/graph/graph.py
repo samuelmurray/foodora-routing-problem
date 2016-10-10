@@ -3,8 +3,6 @@ A graph class. The graph consists of nodes and a dictionary that represent edges
 """
 
 from typing import Dict, List, Iterable, Tuple
-import math
-
 from graph.node import Node
 
 

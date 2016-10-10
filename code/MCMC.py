@@ -405,12 +405,12 @@ class Sim_annSolver:
         # Otherwise calc distance and add to matrix
         #return 1.0
         distance = 0.0
-        if(self.costMatrix[start.getID(), goal.getID()] > -1):
-            distance = self.costMatrix[start.getID(), goal.getID()]
+        if(self.costMatrix[start.get_id(), goal.get_id()] > -1):
+            distance = self.costMatrix[start.get_id(), goal.get_id()]
         else:
             distance = pf.a_star_search(self.graph, start, goal)
-            self.costMatrix[start.getID(), goal.getID()] = distance
-            self.costMatrix[goal.getID(), start.getID()] = distance
+            self.costMatrix[start.get_id(), goal.get_id()] = distance
+            self.costMatrix[goal.get_id(), start.get_id()] = distance
         return distance
         
      
