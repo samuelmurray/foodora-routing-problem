@@ -47,10 +47,10 @@ class Problem:
 		with open('pddl_init.ppdl', 'w') as out:
 		    out.write('(define (problem test_problem_cost)\n\t(:domain foodora_cost_domain)\n\t(:objects ')
 		    for c in self.customers.keys():
-		        out.write(c[1] + ' ')
+		        out.write(c + ' ')
 		    out.write('- customer\n\t\t\t\t\t')
 		    for r in self.restaurants.keys():
-		        out.write(r[0] + ' ')
+		        out.write(r + ' ')
 		    out.write('- restaurant\n\t\t\t\t\t')
 		    for b in self.bikers.keys():
 		        out.write(b + ' ')
