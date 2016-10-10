@@ -24,13 +24,13 @@ class Sim_annSolver:
         """ Read in the problem data and store of use."""
         # Take the order dict and make a List of tuples. The first
         # index is typ type, "biker", "REST" or "CUST"
-        self.bikerStart     = dict(data.get_bikers())
-        self.nrBikers       = len(data.nrBikers) 
-        self.graph          = data.get_graph()
+        self.bikerStart     = dict(data.bikers())
+        self.nrBikers       = len(self.bikerStart)
+        self.graph          = data.graph()
         self.nrNodes        = self.graph.node_count()
         self.costMatrix     = -1 * np.ones((self.nrNodes, self.nrNodes))
         self.nodeDicts      = [dict(), dict()]  # type: List[Dict[int, Node]]
-        self.orders         = dict(data.orders)
+        self.orders         = dict(data.orders())
         
         self.nrOrders       = 0
         for o in range(len(self.orders)):
