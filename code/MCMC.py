@@ -11,6 +11,7 @@ from typing import Dict, List, Tuple, Set
 import numpy as np
 from warnings import warn
 from problem import Problem
+import copy
 
 class SimulatedAnnealing:
     """This class contains all the method to solve the foodora VRP. Several 
@@ -20,17 +21,18 @@ class SimulatedAnnealing:
     REST = 0
     CUST = 1
     
-    def __init__(self, data: Problem) -> None:
+    def __init__(self, data: Problem, savePlotData = False) -> None:
         """ Read in the problem data and store of use."""
         # Take the order dict and make a List of tuples. The first
         # index is typ type, "biker", "REST" or "CUST"
-        self.bikerStart     = dict(data.bikers())
+        self.bikerStart     = data.bikers()
         self.nrBikers       = len(self.bikerStart)
         self.graph          = data.graph()
         self.nrNodes        = self.graph.node_count()
-        self.costMatrix     = -1 * np.ones((self.nrNodes, self.nrNodes))
+        self.costMatrix     = (-1 * np.ones((self.nrNodes, self.nrNodes)) +
+                               np.eye(self.nrNodes))
         self.nodeDicts      = [dict(), dict()]  # type: List[Dict[int, Node]]
-        self.orders         = dict(data.orders())
+        self.orders         = data.orders()
         
         self.nrOrders       = 0
         for o in range(len(self.orders)):
@@ -39,7 +41,7 @@ class SimulatedAnnealing:
             self.nrOrders += 1
 
         self.solution       = dict()  # type: Dict[int, List[Tuple[int, int]]]
-        self.costOfRoutes   = np.inf * np.ones(self.nrBikers)
+        self.costOfRoutes   = None
         # bikers1, biker2
         self.searchOrder    = []  # type: List[Tuple[int, int]]
         for i in range(self.nrBikers):
@@ -52,6 +54,13 @@ class SimulatedAnnealing:
         self.alpha = None  # type: int
         self.gamma = None  # type: int
         self.bestSolution = None  # type: Dict[int, List[Tuple[int, int]]]
+        self.bestCost = None
+        self.bestCostOfRoutes = None
+        self.savePlotData = savePlotData
+        if savePlotData:
+            self.costData = []
+            self.bestCostData = []
+            self.tempData = []
 
     def runSA(self, R=3, zeroCostR = 10) -> None:
         """Runs the entire simulated annealing algorithm. All sub-functions 
@@ -67,8 +76,9 @@ class SimulatedAnnealing:
         # Initialize cooloing schedule parameters
         nrResets = 0
         nrZeroCosts = 0
-        self.bestSolution = dict(self.solution)
+        self.bestSolution = copy.deepcopy(self.solution)
         self.bestCost = self.objectiveFunction(self.costOfRoutes)
+        self.bestCostOfRoutes = copy.deepcopy(self.costOfRoutes)
         self.Tb = -1
         self.initializeCoolingParameters()
         k = 1
@@ -85,11 +95,13 @@ class SimulatedAnnealing:
                 nrMoves = len(moveSet)
                 #Break if we are stuck
                 if nrZeroCosts > zeroCostR:
+                    nrResets += 1
                     break
                 for m in range(nrMoves):
                     move = moveSet.pop()
                     #calculate initial cost change from procedure (a) in Osman
                     costChanges, insInx = self.getCostInsDelProcedure(bikerPair, move)
+                    #print("bikerPari: ", bikerPair, "Move: ", move, "CostCh: ", costChanges)
                     delta = (self.objectiveFunction(self.costOfRoutes + costChanges) -
                              self.objectiveFunction(self.costOfRoutes))
                     theta = np.random.random()
@@ -100,9 +112,14 @@ class SimulatedAnnealing:
                         self.updateSolution(bikerPair, move, insInx)
                         newCost = self.objectiveFunction(self.costOfRoutes)
                         if newCost < self.bestCost:
-                            self.bestSolution = self.solution
-                            self.bestCost = newCost
+                            print("Found new best")
+                            self.bestSolution = copy.deepcopy(self.solution)
+                            self.bestCost = float(newCost)
+                            self.bestCostOfRoutes = copy.deepcopy(self.costOfRoutes)
                             self.Tb = Tk
+                            if self.savePlotData:
+                                self.bestCostData.append((newCost, k))
+                            print("Found new best")
                             nrResets = 0
                             nrZeroCosts = 0
                         else:
@@ -111,6 +128,7 @@ class SimulatedAnnealing:
                         beta = ((self.Ts - self.Tf) / ((self.alpha + self.gamma * np.sqrt(k)) * self.Ts * self.Tf))
                         Tk = Tk / (1 + beta * Tk)
                         foundNewSol = True
+                        #print("Tk is: ", Tk, "beta is: ", beta)
                         break
                     else:
                         pass
@@ -120,9 +138,12 @@ class SimulatedAnnealing:
                     pass
             if not foundNewSol:
                 # Update temperature, reset update
-                self.Tr = np.max(self.Tr / 2, self.Tb)
+                self.Tr = np.amax([self.Tr / 2, self.Tb])
                 Tk = self.Tr
                 nrResets += 1
+            if self.savePlotData:
+               self.costData.append(self.objectiveFunction(self.costOfRoutes))
+               self.tempData.append(float(Tk))
             k += 1
 
     def runLambdaDescent(self, thres=0.0) -> Dict[int, List[Tuple[int, int]]]:
@@ -154,18 +175,22 @@ class SimulatedAnnealing:
                 else:
                     continue  # No better found, continute 1st for loop
 
-        return dict(self.solution)
+        return copy.deepcopy(self.solution)
 
     def initializeSolution(self) -> None:
         """Creates and initial feasible solution. Takes all the orders and 
         distributes them roughly equal among the bikers. Every biker goes 
         directly from the restaurant to the customer."""
         orders = list(range(self.nrOrders))
+        self.solution       = dict()  # type: Dict[int, List[Tuple[int, int]]]
+        for i in range(self.nrBikers):
+            self.solution[i] = []
+        self.costOfRoutes   = np.zeros(self.nrBikers)
         b = 0
         while len(orders) > 0:
             o = orders.pop()
-            self.solution[b].append((Sim_annSolver.REST, o))
-            self.solution[b].append((Sim_annSolver.CUST, o))
+            self.solution[b].append((SimulatedAnnealing.REST, o))
+            self.solution[b].append((SimulatedAnnealing.CUST, o))
             b += 1
             b = b % self.nrBikers
         for b in range(self.nrBikers):
@@ -191,7 +216,7 @@ class SimulatedAnnealing:
                     Nfeas += 1
                 delta = (self.objectiveFunction(self.costOfRoutes + costChanges) -
                          self.objectiveFunction(self.costOfRoutes))
-                if np.abs(delta) < deltaMin:
+                if np.abs(delta) < deltaMin and np.abs(delta) > 0:
                     deltaMin = np.abs(delta)
                 if np.abs(delta) > deltaMax:
                     deltaMax = np.abs(delta)
@@ -203,7 +228,7 @@ class SimulatedAnnealing:
     
     def objectiveFunction(self, routeCosts: np.ndarray) -> float:
         """The objective function. May be max of sum."""
-        return np.max(routeCosts)
+        return np.amax(routeCosts)
 
     def updateSolution(self, bikerPair: Tuple[int, int],
                        move: Tuple[int, int], insInx: int) -> None:
@@ -211,11 +236,11 @@ class SimulatedAnnealing:
         (at least improved) TSP route using 2optProcedure."""
         b1 = bikerPair[0]
         b2 = bikerPair[1]
-        costChange = np.zeros(self.nrBikers)
+        #costChange = np.zeros(self.nrBikers)
         if move[0] > -1 and move[1] > -1:
             self.__11operator(self.solution[b1],
                               self.solution[b2], move[0], move[1])
-
+            
         else:
             if move[1] == -1:
                 self.__01operator(self.solution[b1], self.solution[b2],
@@ -223,9 +248,12 @@ class SimulatedAnnealing:
             else:
                 self.__01operator(self.solution[b2], self.solution[b1],
                                   move[1], insInx)
-        costChange[b1] = self.__2optProcedure(b1)
-        costChange[b2] = self.__2optProcedure(b2)
-        self.costOfRoutes += costChange
+        newCost, newRoute = self.__2optProcedure(b1)
+        self.solution[b1] = newRoute
+        self.costOfRoutes[b1] = newCost
+        newCost, newRoute = self.__2optProcedure(b2)
+        self.solution[b2] = newRoute
+        self.costOfRoutes[b2] = newCost
         
     """WARNING The following functions determine how orders are transfered between 
     bikers. All these functions assumes R,C pairs. """
@@ -258,11 +286,9 @@ class SimulatedAnnealing:
         solution."""
         neighbourhood = []  # type: List[Set[Tuple[int, int]]]
         for pair in self.searchOrder:
-            biker1Route = list(self.solution[pair[0]])
-            biker2Route = list(self.solution[pair[1]])
-            len1        = len(biker1Route)
+            len1        = len(self.solution[pair[0]])
             stop1       = len1 + 1 if len1 == 0 else len1
-            len2        = len(biker2Route)
+            len2        = len(self.solution[pair[1]])
             stop2       = len2 + 1 if len2 == 0 else len2
             neighbour = set()  # type: Set[Tuple[int, int]]
             for inx1 in range(0, stop1, 2):
@@ -290,18 +316,19 @@ class SimulatedAnnealing:
         b1 = bikerPair[0]
         b2 = bikerPair[1]
         if move[0] > -1 and move[1] > -1:
-            routes = [list(self.solution[b1]), list(self.solution[b2])]
+            routes = [copy.deepcopy(self.solution[b1]), 
+                                    copy.deepcopy(self.solution[b2])]
             r = [routes[0].pop(move[0]), routes[1].pop(move[1])]
             c = [routes[0].pop(move[0]), routes[1].pop(move[1])]
-            costChanges[b1] = -1 * self.__calcL(routes[0], b1, move[0], r[0], c[0])
-            costChanges[b2] = -1 * self.__calcL(routes[1], b2, move[1], r[1], c[1])
+            costChanges[b1] = -1 * self.calcL(routes[0], b1, move[0], r[0], c[0])
+            costChanges[b2] = -1 * self.calcL(routes[1], b2, move[1], r[1], c[1])
             for n1 in range(2):
                 n2 = (n1 + 1) % 2
                 rest = r[n2]
                 cust = c[n2]
                 lmin = np.inf
                 for i in range(0, len(routes[n1]) + 1, 2):
-                    l = self.__calcL(routes[n1], bikerPair[n1], i, rest, cust)
+                    l = self.calcL(routes[n1], bikerPair[n1], i, rest, cust)
                     if l < lmin:
                         lmin = l
                 costChanges[bikerPair[n1]] += lmin
@@ -312,47 +339,54 @@ class SimulatedAnnealing:
             else:
                 (von, nach) = (b2, b1)
                 inx = move[1]
-            routeVon = list(self.solution[von])
-            routeNach = list(self.solution[nach])
+            routeVon = copy.deepcopy(self.solution[von])
+            routeNach = copy.deepcopy(self.solution[nach])
             r = routeVon.pop(inx)
             c = routeVon.pop(inx)
-            costChanges[von] = -1 * self.__calcL(routeVon, von, inx, r, c)
+            costChanges[von] = -1 * self.calcL(routeVon, von, inx, r, c)
             lmin = np.inf
-            for i in range(0, len(routeNach), 2):
-                l = self.__calcL(routeNach, nach, i, r, c)
+            for i in range(0, len(routeNach) + 1, 2):
+                l = self.calcL(routeNach, nach, i, r, c)
                 if l < lmin:
                     lmin = l
                     insInx = i
             costChanges[nach] = lmin
         return costChanges, insInx
 
-    def __calcL(self, route: List[Tuple[int, int]], bikerNr: int, inx: int,
+    def calcL(self, route: List[Tuple[int, int]], bikerNr: int, inx: int,
                 rest: Tuple[int, int], cust: Tuple[int, int]) -> float:
         """Calculates the l value from procedure (a) in Osman."""
         l = 0.0
+        restNode = self.nodeDicts[rest[0]][rest[1]]
+        custNode = self.nodeDicts[cust[0]][cust[1]]
         if inx > 1:
             order1 = route[inx - 1]
+            custNodePre = self.nodeDicts[order1[0]][order1[1]]
             if order1[0] != 1:
                 warn("Some thing is wrong! Trying to insert after R.")
-            l += self.__getDistance(self.nodeDicts[order1[0]][order1[1]],
-                                    self.nodeDicts[rest[0]][rest[1]])
+            #Add distance from last customer to new restaurant
+            l += self.__getDistance(custNodePre, restNode)
         else:
             if inx == 1:
-                warn("WHY IS inx==1 ?!!")
-            l += self.__getDistance(self.bikerStart[bikerNr], 
-                                    self.nodeDicts[rest[0]][rest[1]])
-        l += self.__getDistance(self.nodeDicts[rest[0]][rest[1]],
-                                self.nodeDicts[cust[0]][cust[1]])
-            
+                #sanity check
+                warn("WHY IS inx==1 ?!! can't add at a customer index (odd index)")
+            #If added as first order, add distance from start noce
+            l += self.__getDistance(self.bikerStart[bikerNr], restNode)
+        # Add order internal distance
+        l += self.__getDistance(restNode, custNode)
         if inx < len(route) - 1:
             order2 = route[inx]
+            restNodePost = self.nodeDicts[order2[0]][order2[1]]
             if order2[0] != 0:
                 warn("Some thing is wrong! Trying to insert before C.")
-            l += self.__getDistance(self.nodeDicts[cust[0]][cust[1]],
-                                    self.nodeDicts[order2[0]][order2[1]])
-        if inx > 1 and inx < len(route) - 1:
-            l -= self.__getDistance(self.nodeDicts[order1[0]][order1[1]],
-                                    self.nodeDicts[order2[0]][order2[1]])
+            l += self.__getDistance(custNode, restNodePost)
+        if len(route) > 0 and inx == 0:
+            #if insterted as 0 and not empty route, remove distance to previous first rest
+            l -= self.__getDistance(self.bikerStart[bikerNr], restNodePost)
+        elif inx > 1 and inx < len(route) - 1:
+            l -= self.__getDistance(custNodePre, restNodePost)
+        else:
+            pass
         return l
 
     def __2optProcedure(self, bikerNr: int) -> float:
@@ -360,14 +394,13 @@ class SimulatedAnnealing:
         of bikerNr. Swaps pairs of edges in the route until no improvement can
         be made. This is procedute (b) in Osman."""
         foundBetter = True
-        bestCost = self.costOfRoutes[bikerNr]
-        startCost = self.costOfRoutes[bikerNr]
-        route = self.solution[bikerNr]
+        route = copy.deepcopy(self.solution[bikerNr])
+        bestCost = self.calcCostofRoute(route, bikerNr)
         while foundBetter:
             foundBetter = False
             for i in range(0, len(route) - 1, 2):
                 for k in range(i + 1, len(route), 2):
-                    newRoute = Sim_annSolver.__2optSwap(route, i, k)
+                    newRoute = SimulatedAnnealing.__2optSwap(route, i, k)
                     newCost = self.calcCostofRoute(newRoute, bikerNr)
                     if newCost < bestCost:
                         route = newRoute
@@ -376,7 +409,7 @@ class SimulatedAnnealing:
                         break
                 if foundBetter:
                     break
-        return bestCost - startCost
+        return bestCost, route
 
     @staticmethod
     def __2optSwap(route: List[Tuple[int, int]], i: int, k: int) -> List[Tuple[int, int]]:
@@ -405,6 +438,8 @@ class SimulatedAnnealing:
 
     def calcCostofRoute(self, route: List[Tuple[int, int]], bikerNr: int) -> float:
         """Calclulates the total time cost of a route. """
+        if len(route) < 1:
+            return 0.0
         startNode = self.nodeDicts[route[0][0]][route[0][1]]
         cost = self.__getDistance(self.bikerStart[bikerNr], startNode)
         for i in range(len(route) - 1):
@@ -420,13 +455,13 @@ class SimulatedAnnealing:
         if self.costMatrix[start.get_id(), goal.get_id()] > -1:
             distance = self.costMatrix[start.get_id(), goal.get_id()]
         else:
-            distance = pf.a_star_search(self.graph, start, goal)
+            seq, distance = pf.a_star_search(self.graph, start, goal)
             self.costMatrix[start.get_id(), goal.get_id()] = distance
             self.costMatrix[goal.get_id(), start.get_id()] = distance
         return distance
 
 #if __name__ == "__main__":
-#    simulator = Sim_annSolver(data)
+#    simulator = SimulatedAnnealing(data)
 #    simulator.runSA()
     #   simulator.initializeSolution()
     #    simulator.solution[0] = [(0,0), (1,0), (0,1), (1,1)]

@@ -61,7 +61,11 @@ if __name__ == '__main__':
         print("Id: {id}. From: {from_node}, To: {to_node}".format(id=key,
                                                                   from_node=orders[key][0].name(),
                                                                   to_node=orders[key][1].name()))
-
+    
     problem = Problem(graph, bikers, orders)
-    solver = SimulatedAnnealing(problem)
+    solver = SimulatedAnnealing(problem, True)
+    solver.runSA()
+    print("Found solution: ", solver.bestSolution)
+    print("Solution cost: ", solver.bestCost)
+    print("Cost for all bikers: ", solver.bestCostOfRoutes)
     #problem.make_pddl()
