@@ -41,8 +41,7 @@ class Graph:
             self.__graph_dict[node] = []
 
     def add_edge(self, node1: Node, node2: Node):
-        """ Adds an edge between two nodes. Since edges are not directed, it is added in both directions.
-        """
+        """ Adds an edge between two nodes. Since edges are not directed, it is added in both directions. """
         self.__add_edge(node1, node2)
         self.__add_edge(node2, node1)
 
@@ -55,8 +54,7 @@ class Graph:
             self.__graph_dict[node1] = [node2]
 
     def __generate_edges(self) -> Iterable[Tuple[Node, Node]]:
-        """ A method generating the edges of the graph. Edges are represented as tuples of two nodes.
-        """
+        """ A method generating the edges of the graph. Edges are represented as tuples of two nodes. """
         edges = []
         for node in self.__graph_dict.keys():
             for neighbour in self.__graph_dict[node]:
@@ -73,17 +71,3 @@ class Graph:
         for edge in self.__generate_edges():
             res += "{" + edge[0].name() + "-" + edge[1].name() + "} "
         return res
-
-
-def graph_from_json(json_data):
-    graph = Graph()
-    keys = json_data.keys()  # type: str
-    for key in keys:
-        x = json_data[key]["x"]
-        y = json_data[key]["y"]
-        graph.add_node(Node(x, y, key))
-    for key in keys:
-        neighbours = json_data[key]["neighbours"]
-        for neighbour in neighbours:
-            graph.add_edge(Node.node_by_name(key), Node.node_by_name(neighbour))
-    return graph

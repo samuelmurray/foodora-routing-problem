@@ -1,6 +1,8 @@
-from graph.graph import Graph, graph_from_json
+from graph.graph import Graph
+from json_parser import *
 from graph.node import Node
 from graph.path_finder import *
+from problem import Problem
 import json
 
 
@@ -26,8 +28,8 @@ def example_graph():
         print(neighbour)
 
 
-if __name__ == '__main__':
-    with open("graph.json") as data_file:
+def test_astar():
+    with open("data/graph.json") as data_file:
         data = json.load(data_file)
         graph = graph_from_json(data)
     print(graph)
@@ -38,3 +40,26 @@ if __name__ == '__main__':
         print(node)
     print()
     print("Min cost to go from soder to vasastan is {cost}".format(cost=cost))
+
+
+if __name__ == '__main__':
+    with open("data/graph.json") as data_file:
+        data = json.load(data_file)
+        graph = graph_from_json(data)
+    with open("data/orders.json") as data_file:
+        data = json.load(data_file)
+        orders = orders_from_json(data)
+    with open("data/bikers.json") as data_file:
+        data = json.load(data_file)
+        bikers = bikers_from_json(data)
+    print("BIKERS")
+    for key in bikers.keys():
+        print("Id: {id}. Location: {node}".format(id=key, node=bikers[key].name()))
+    print("ORDERS")
+    for key in orders.keys():
+        print("Id: {id}. From: {from_node}, To: {to_node}".format(id=key,
+                                                                  from_node=orders[key][0].name(),
+                                                                  to_node=orders[key][1].name()))
+
+    problem = Problem(graph, bikers, orders)
+    problem.make_pddl()
