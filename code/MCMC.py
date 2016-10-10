@@ -11,7 +11,8 @@ from typing import Dict, List, Tuple, Set
 import numpy as np
 from warnings import warn
 #from problem import Problem
-    
+
+
 class Problem:
     def __init__(self, nrBikers) -> None:
         self.nrNodes = 5
@@ -19,7 +20,7 @@ class Problem:
         self.graph = Graph()
         self.orders = dict()
         for i in range(10):
-            self.orders[i] = (Node(0.5*i, 0.5*i), Node(-0.5*i, -0.5*i))
+            self.orders[i] = (Node(0.5 * i, 0.5 * i), Node(-0.5 * i, -0.5 * i))
 
 
 class Sim_annSolver:
@@ -28,42 +29,39 @@ class Sim_annSolver:
     
     def __init__(self, data: Problem) -> None:
         """ Read in the problem data and store of use."""
-        #Take the order dict and make a List of tuples. The first
+        # Take the order dict and make a List of tuples. The first
         # index is typ type, "biker", "REST" or "CUST"
         self.nrNodes        = data.nrNodes
         self.nrBikers       = data.nrBikers
         self.graph          = data.graph
         self.costMatrix     = -1 * np.ones((data.nrNodes, data.nrNodes))
-        self.nodeDicts      = List[Dict[int, Node]]
-        self.nodeDicts      = [dict(), dict()]
+        self.nodeDicts      = [dict(), dict()]  # type: List[Dict[int, Node]]
         self.orders         = dict(data.orders)
         self.nrOrders       = 0
         for o in range(len(self.orders)):
             self.nodeDicts[0][self.nrOrders] = self.orders[o][0]
             self.nodeDicts[1][self.nrOrders] = self.orders[o][1]
             self.nrOrders += 1
-            
-        self.solution       = Dict[int, List[Tuple[int, int]]] 
-        self.solution       = dict()
+
+        self.solution       = dict()  # type: Dict[int, List[Tuple[int, int]]]
         self.costOfRoutes   = np.inf * np.ones(self.nrBikers)
-        self.searchOrder    = List[Tuple[int, int]] #bikers1, biker2
-        self.searchOrder    = []
+        # bikers1, biker2
+        self.searchOrder    = []  # type: List[Tuple[int, int]]
         for i in range(self.nrBikers):
             self.solution[i] = []
-            for j in range(i+1, self.nrBikers):
-                self.searchOrder.append((i, j))  
-        self.Ts = float
-        self.Tf = float
-        self.Tr = float
-        self.alpha = int
-        self.gamma = int
-        self.bestSolution = Dict[int, List[Tuple[int, int]]]
-        return None
-    
-    def runSA(self, R = 3) -> None:
+            for j in range(i + 1, self.nrBikers):
+                self.searchOrder.append((i, j))
+        self.Ts = None  # type: float
+        self.Tf = None  # type: float
+        self.Tr = None  # type: float
+        self.alpha = None  # type: int
+        self.gamma = None  # type: int
+        self.bestSolution = None  # type: Dict[int, List[Tuple[int, int]]]
+
+    def runSA(self, R=3) -> None:
         # Do initial heuristic solution, only vor variable number of bikers?
         self.initializeSolution()
-        #Initialize cooloing schedule parameters
+        # Initialize cooloing schedule parameters
         nrResets = 0
         self.bestSolution = dict(self.solution)
         self.bestCost = self.objectiveFunction(self.costOfRoutes)
@@ -74,20 +72,19 @@ class Sim_annSolver:
         while nrResets < R:
             foundNewSol = False
             self.searchOrder = np.random.permutation(self.searchOrder)
-            #lambda interchange + cost of move
-            neighbourhood = List[Set[Tuple[int, int]]]
-            neighbourhood = self.lambdaInterchange()
+            # lambda interchange + cost of move
+            neighbourhood = self.lambdaInterchange()  # type: List[Set[Tuple[int, int]]]
             for n in range(len(self.searchOrder)):
                 bikerPair = self.searchOrder[n]
-                moveSet  = set(neighbourhood[n])
-                nrMoves  = len(moveSet)
+                moveSet = set(neighbourhood[n])
+                nrMoves = len(moveSet)
                 for m in range(nrMoves):
                     move = moveSet.pop()
                     costChanges, insInx = self.getCostInsDelProcedure(bikerPair, move)
-                    delta = (self.objectiveFunction(self.costOfRoutes + costChanges)
-                        - self.objectiveFunction(self.costOfRoutes))
+                    delta = (self.objectiveFunction(self.costOfRoutes + costChanges) -
+                             self.objectiveFunction(self.costOfRoutes))
                     theta = np.random.random()
-                    if((delta <= 0) or (np.exp(-delta/Tk) > theta)):
+                    if (delta <= 0) or (np.exp(-delta / Tk) > theta):
                         self.updateSolution(bikerPair, move)
                         newCost = self.objectiveFunction(self.costOfRoutes)
                         if newCost < self.bestCost:
@@ -97,9 +94,8 @@ class Sim_annSolver:
                             nrResets = 0
                         else:
                             pass
-                        beta = ((self.Ts - self.Tf)/
-                        ((self.alpha + self.gamma*np.sqrt(k))*self.Ts*self.Tf))
-                        Tk = Tk/(1 + beta*Tk)
+                        beta = ((self.Ts - self.Tf) / ((self.alpha + self.gamma * np.sqrt(k)) * self.Ts * self.Tf))
+                        Tk = Tk / (1 + beta * Tk)
                         foundNewSol = True
                         break
                     else:
@@ -109,37 +105,33 @@ class Sim_annSolver:
                 else:
                     pass
             else:
-                self.Tr = np.max(self.Tr/2, self.Tb)
+                self.Tr = np.max(self.Tr / 2, self.Tb)
                 Tk = self.Tr
                 nrResets += 1
             k += 1
-        #apply acceptance criteria
-        
-        #update temperatures
-        
-        #check for stop
-        
-        return None
-    
+
+        # apply acceptance criteria
+        # update temperatures
+        # check for stop
+
     def initializeCoolingParameters(self) -> None:
-        #lambda interchange + cost of move
+        # lambda interchange + cost of move
         deltaMax = 0
         deltaMin = np.inf
-        Nfeas    = 0
-        neighbourhood = List[Set[Tuple[int, int]]]
-        neighbourhood = self.lambdaInterchange()
+        Nfeas = 0
+        neighbourhood = self.lambdaInterchange()  # type: List[Set[Tuple[int, int]]]
         # Now we have a 1-interchange neighbourhood, a set of possible moves
         for n in range(len(self.searchOrder)):
             bikerPair = self.searchOrder[n]
-            moveSet  = set(neighbourhood[n])
-            nrMoves  = len(moveSet)
+            moveSet = set(neighbourhood[n])
+            nrMoves = len(moveSet)
             for m in range(nrMoves):
                 move = moveSet.pop()
                 costChanges, insInx = self.getCostInsDelProcedure(bikerPair, move)
                 if self.checkFeasibility(bikerPair, move):
                     Nfeas += 1
-                delta = (self.objectiveFunction(self.costOfRoutes + costChanges)
-                - self.objectiveFunction(self.costOfRoutes))
+                delta = (self.objectiveFunction(self.costOfRoutes + costChanges) -
+                         self.objectiveFunction(self.costOfRoutes))
                 if np.abs(delta) < deltaMin:
                     deltaMin = np.abs(delta)
                 if np.abs(delta) > deltaMax:
@@ -149,47 +141,45 @@ class Sim_annSolver:
         self.Tr = self.Ts
         self.alpha = self.nrOrders * Nfeas
         self.gamma = self.nrOrders
-        return None                
-        
-    def runLambdaDescent(self, thres = 0.0) -> Dict[int, List[Tuple[int, int]]]:
+
+    def runLambdaDescent(self, thres=0.0) -> Dict[int, List[Tuple[int, int]]]:
         # Do initial heuristic solution, only vor variable number of bikers?
         self.initializeSolution()
         # Now we have an initial self.solution
         # and en initial self.costOfRoutes
         done = False
-        while(not done):
+        while not done:
             done = True
-            #lambda interchange + cost of move
-            neighbourhood = List[Set[Tuple[int, int]]]
-            neighbourhood = self.lambdaInterchange()
+            # lambda interchange + cost of move
+            neighbourhood = self.lambdaInterchange()  # type: List[Set[Tuple[int, int]]]
             # Now we have a 1-interchange neighbourhood, a set of possible moves
             for n in range(len(self.searchOrder)):
                 bikerPair = self.searchOrder[n]
-                moveSet  = set(neighbourhood[n])
-                nrMoves  = len(moveSet)
+                moveSet = set(neighbourhood[n])
+                nrMoves = len(moveSet)
                 for m in range(nrMoves):
-                    move      = moveSet.pop()
+                    move = moveSet.pop()
                     costChanges, insInx = self.getCostInsDelProcedure(bikerPair, move)
-                    delta = (self.objectiveFunction(self.costOfRoutes + costChanges)
-                    - self.objectiveFunction(self.costOfRoutes))
+                    delta = (self.objectiveFunction(self.costOfRoutes + costChanges) -
+                             self.objectiveFunction(self.costOfRoutes))
                     if delta < thres:
                         self.updateSolution(bikerPair, move, insInx)
                         done = False
-                        break # Break 2nd for loop
+                        break  # Break 2nd for loop
                 if not done:
-                    break # Break first for loop, but coninute while loop
+                    break  # Break first for loop, but coninute while loop
                 else:
-                    continue # No better found, continute 1st for loop
-                
+                    continue  # No better found, continute 1st for loop
+
         return dict(self.solution)
-    
+
     def initializeSolution(self) -> None:
         """Creates and initial feasible solution. Takes all the orders and 
         distributes them roughly equal among the bikers. Every biker goes 
         directly from the restaurant to the customer."""
         orders = list(range(self.nrOrders))
         b = 0
-        while(len(orders) > 0):
+        while len(orders) > 0:
             o = orders.pop()
             self.solution[b].append((Sim_annSolver.REST, o))
             self.solution[b].append((Sim_annSolver.CUST, o))
@@ -197,18 +187,17 @@ class Sim_annSolver:
             b = b % self.nrBikers
         for b in range(self.nrBikers):
             self.costOfRoutes[b] = self.calcCostofRoute(self.solution[b])
-        return None
-    
+
     def objectiveFunction(self, routeCosts: np.ndarray) -> float:
         return np.max(routeCosts)
-    
-    def updateSolution(self, bikerPair: Tuple[int, int], 
+
+    def updateSolution(self, bikerPair: Tuple[int, int],
                        move: Tuple[int, int], insInx: int) -> None:
         b1 = bikerPair[0]
         b2 = bikerPair[1]
         costChange = np.zeros(self.nrBikers)
-        if(move[0] > -1 and move[1] > -1):
-            self.__11operator(self.solution[b1], 
+        if move[0] > -1 and move[1] > -1:
+            self.__11operator(self.solution[b1],
                               self.solution[b2], move[0], move[1])
 
         else:
@@ -217,20 +206,18 @@ class Sim_annSolver:
                                   move[0], insInx)
             else:
                 self.__01operator(self.solution[b2], self.solution[b1],
-                                  move[1], insInx)              
+                                  move[1], insInx)
         costChange[b1] = self.__2optProcedure(self.solution[b1])
         costChange[b2] = self.__2optProcedure(self.solution[b2])
         self.costOfRoutes += costChange
-        return None
-    
+
     def lambdaInterchange(self) -> List[Set[Tuple[int, int]]]:
         """WARNING: This function assumes R,C pairs.
         This function implements a 1-interchange mechanism for a carrying 
         capacity of 1 with 1 load per order.
         The function returns the a neighbourhood of solutions to the current 
         solution."""
-        neighbourhood = List[Set[Tuple[int, int]]]
-        neighbourhood = []
+        neighbourhood = []  # type: List[Set[Tuple[int, int]]]
         for pair in self.searchOrder:
             biker1Route = list(self.solution[pair[0]])
             biker2Route = list(self.solution[pair[1]])
@@ -238,15 +225,14 @@ class Sim_annSolver:
             stop1       = len1 + 1 if len1 == 0 else len1
             len2        = len(biker2Route)
             stop2       = len2 + 1 if len2 == 0 else len2
-            neighbour = Set[Tuple[int, int]]
-            neighbour = set()
+            neighbour = set()  # type: Set[Tuple[int, int]]
             for inx1 in range(0, stop1, 2):
                 for inx2 in range(0, stop2, 2):
-                    if(len1 > 0):
+                    if len1 > 0:
                         neighbour.add((inx1, -1))
-                    if(len2 > 0):
+                    if len2 > 0:
                         neighbour.add((-1, inx2))
-                    if(len1 > 0 and len2 > 0):
+                    if len1 > 0 and len2 > 0:
                         neighbour.add((inx1, inx2))
             neighbourhood.append(neighbour)
         return neighbourhood
@@ -254,41 +240,38 @@ class Sim_annSolver:
     """WARNING The following functions determine how orders are transfered between 
     bikers. These needs to be changed to account for capacity != 1 and 
     lambda > 1. """
-    def __01operator(self, biker1Route: List, biker2Route: List,
-                      inx1: int, inx2: int) -> Tuple[List]:
+
+    def __01operator(self, biker1Route: List, biker2Route: List, inx1: int, inx2: int) -> Tuple[List]:
         r = biker1Route.pop(inx1)
         c = biker1Route.pop(inx1)
         biker2Route.insert(inx2, c)
         biker2Route.insert(inx2, r)
         return biker1Route, biker2Route
-    
-    def __10operator(self, biker1Route: List, biker2Route: List,
-                      inx1: int, inx2: int) -> Tuple[List]:
+
+    def __10operator(self, biker1Route: List, biker2Route: List, inx1: int, inx2: int) -> Tuple[List]:
         return self.__01operator(biker2Route, biker1Route, inx2, inx1)
 
-    def __11operator(self, biker1Route: List, biker2Route: List,
-                      inx1: int, inx2: int) -> Tuple[List]:
+    def __11operator(self, biker1Route: List, biker2Route: List, inx1: int, inx2: int) -> Tuple[List]:
         r1 = biker1Route.pop(inx1)
         c1 = biker1Route.pop(inx1)
         r2 = biker2Route.pop(inx2)
-        c2 = biker2Route.pop(inx2)        
+        c2 = biker2Route.pop(inx2)
         biker2Route.insert(inx2, c1)
         biker2Route.insert(inx2, r1)
         biker1Route.insert(inx1, c2)
         biker1Route.insert(inx1, r2)
         return biker1Route, biker2Route
-    
-    def getCostInsDelProcedure(self, bikerPair: Tuple[int, int], 
-                               move: Tuple[int, int]) -> np.ndarray:
+
+    def getCostInsDelProcedure(self, bikerPair: Tuple[int, int], move: Tuple[int, int]) -> np.ndarray:
         """WARNING this functions assumes R,C pairs """
         costChanges = np.zeros(self.nrBikers)
         insInx = -1
-        if( (move[0] % 2 != 0 and move[0] > -1) or 
-           (move[1] % 2 != 0 and move[1] > -1)):
+        if (move[0] % 2 != 0 and move[0] > -1) or \
+                (move[1] % 2 != 0 and move[1] > -1):
             warn("Something is wrong! R,C pair not respected in move suggestion!")
         b1 = bikerPair[0]
         b2 = bikerPair[1]
-        if(move[0] > -1 and move[1] > -1):
+        if move[0] > -1 and move[1] > -1:
             routes = [list(self.solution[b1]), list(self.solution[b2])]
             r = [routes[0].pop(move[0]), routes[1].pop(move[1])]
             c = [routes[0].pop(move[0]), routes[1].pop(move[1])]
@@ -307,12 +290,12 @@ class Sim_annSolver:
         else:
             if move[1] == -1:
                 (von, nach) = (b1, b2)
-                inx         = move[0]
+                inx = move[0]
             else:
                 (von, nach) = (b2, b1)
-                inx         = move[1]
-            routeVon    = list(self.solution[von])
-            routeNach   = list(self.solution[nach])
+                inx = move[1]
+            routeVon = list(self.solution[von])
+            routeNach = list(self.solution[nach])
             r = routeVon.pop(inx)
             c = routeVon.pop(inx)
             costChanges[von] = -1 * self.__calcL(routeVon, inx, r, c)
@@ -322,10 +305,10 @@ class Sim_annSolver:
                 if l < lmin:
                     lmin = l
                     insInx = i
-            costChanges[nach] = lmin         
+            costChanges[nach] = lmin
         return costChanges, insInx
-    
-    def __calcL(self, route: List[Tuple[int, int]], inx: int, 
+
+    def __calcL(self, route: List[Tuple[int, int]], inx: int,
                 rest: Tuple[int, int], cust: Tuple[int, int]) -> float:
         l = 0.0
         if inx > 1:
@@ -343,12 +326,12 @@ class Sim_annSolver:
             l += self.__getDistance(self.nodeDicts[cust[0]][cust[1]],
                                     self.nodeDicts[order2[0]][order2[1]])
         if inx > 1 and inx < len(route) - 1:
-            l -= self.__getDistance(self.nodeDicts[order1[0]][order1[1]], 
+            l -= self.__getDistance(self.nodeDicts[order1[0]][order1[1]],
                                     self.nodeDicts[order2[0]][order2[1]])
         return l
 
-    def __2optProcedure(self, route: List[Tuple[int ,int]]) -> float:
-        "WARNING: Assumes R,C pairs. WARNING: This function is not tested."
+    def __2optProcedure(self, route: List[Tuple[int, int]]) -> float:
+        """WARNING: Assumes R,C pairs. WARNING: This function is not tested."""
         foundBetter = True
         bestCost = self.calcCostofRoute(route)
         while foundBetter:
@@ -363,34 +346,31 @@ class Sim_annSolver:
                         foundBetter = True
                         break
                 if foundBetter:
-                    break            
+                    break
         return bestCost
-    
-    @staticmethod    
-    def __2optSwap(route: List[Tuple[int, int]],
-                   i: int, k: int) -> List[Tuple[int, int]]:
+
+    @staticmethod
+    def __2optSwap(route: List[Tuple[int, int]], i: int, k: int) -> List[Tuple[int, int]]:
         """WARNING: This function assumes R,C pairs. """
-        if(i % 2 != 0 or k % 2 != 1):
+        if i % 2 != 0 or k % 2 != 1:
             warn("Revers ordering starts on Customer or ends on Restaurant")
-        newRoute = List[Tuple[int, int]]
-        newRoute = []
+        newRoute = []  # type: List[Tuple[int, int]]
         newRoute[0:i] = list(route[0:i])
-        interRoute = list(route[i:k+1])
-        interRouteRev = [(-1, -1)]*len(interRoute)
-        interRoute = list(route[i:k+1:2])
+        interRoute = list(route[i:k + 1])
+        interRouteRev = [(-1, -1)] * len(interRoute)
+        interRoute = list(route[i:k + 1:2])
         interRoute.reverse()
         interRouteRev[0::2] = interRoute
-        interRoute = list(route[i+1:k+1:2])
+        interRoute = list(route[i + 1:k + 1:2])
         interRoute.reverse()
         interRouteRev[1::2] = interRoute
-        newRoute[i:k+1] = interRouteRev
-        newRoute[k+1:] = list(route[k+1:])
+        newRoute[i:k + 1] = interRouteRev
+        newRoute[k + 1:] = list(route[k + 1:])
         return newRoute
-   
-    def checkFeasibility(self, bikerPair: Tuple[int, int], 
-                         move: Tuple[int, int]) -> bool:
+
+    def checkFeasibility(self, bikerPair: Tuple[int, int], move: Tuple[int, int]) -> bool:
         return True
-        
+
     def calcCostofRoute(self, route: List[Tuple[int, int]]) -> float:
         """Calclulates the total time cost of a route. """
         cost = 0.0
@@ -399,31 +379,31 @@ class Sim_annSolver:
             node2 = self.nodeDicts[route[i + 1][0]][route[i + 1][1]]
             cost += self.__getDistance(node1, node2)
         return cost
-        
+
     def __getDistance(self, start: Node, goal: Node) -> float:
         # Check matrix
         # Otherwise calc distance and add to matrix
-        #return 1.0
+        # return 1.0
         distance = 0.0
-        if(self.costMatrix[start.get_id(), goal.get_id()] > -1):
+        if self.costMatrix[start.get_id(), goal.get_id()] > -1:
             distance = self.costMatrix[start.get_id(), goal.get_id()]
         else:
             distance = pf.a_star_search(self.graph, start, goal)
             self.costMatrix[start.get_id(), goal.get_id()] = distance
             self.costMatrix[goal.get_id(), start.get_id()] = distance
         return distance
-        
-     
+
+
 if __name__ == "__main__":
     data = Problem(3)
     simulator = Sim_annSolver(data)
- #   simulator.initializeSolution()
-#    simulator.solution[0] = [(0,0), (1,0), (0,1), (1,1)]
-#    simulator.solution[1] = [(0,2), (1,2), (0,3), (1,3)]
-#    simulator.solution[2] = [(0,4), (1,4)]
-#    neighbourhood = simulator.lambdaInterchange()
-#    cost = simulator.getCostInsDelProcedure((0, 2), (0, -1))
+    #   simulator.initializeSolution()
+    #    simulator.solution[0] = [(0,0), (1,0), (0,1), (1,1)]
+    #    simulator.solution[1] = [(0,2), (1,2), (0,3), (1,3)]
+    #    simulator.solution[2] = [(0,4), (1,4)]
+    #    neighbourhood = simulator.lambdaInterchange()
+    #    cost = simulator.getCostInsDelProcedure((0, 2), (0, -1))
     simulator.initializeSolution()
     simulator.initializeCoolingParameters()
-#    for o in neighbourhood:
-#        print(o)
+    #    for o in neighbourhood:
+    #        print(o)
