@@ -57,20 +57,20 @@ class Problem:
             out.write('\t(:init\n (= (total-cost) 0)\n')
 
             for c_id, c_n in self.customers.items():
-                out.write('\t(at-c ' + str(c_id) + ' ' + str(c_n) + ')\n')
+                out.write('\t(at-c ' + str(c_id) + ' ' + c_n.name() + ')\n')
             for r_id, r_n in self.restaurants.items():
-                out.write('\t(at-r ' + str(r_id) + ' ' + str(r_n) + ')\n')
+                out.write('\t(at-r ' + str(r_id) + ' ' + r_n.name() + ')\n')
             for e in self.graph.edges():
-                out.write('\t(edge' + e[0].name() + ' ' + e[1].name() + ')\n')
+                out.write('\t(edge ' + e[0].name() + ' ' + e[1].name() + ')\n')
 
             for e2 in self.graph.edges():
                 out.write('\t(= distance ' + e2[0].name() + ' ' + e2[1].name() + ') ' + str(pf.distance(e2[0], e2[1])) + ')\n')
 
-            for b_id, b_n in self.bikers.values():
+            for b_id, b_n in self.bikers.items():
                 out.write('\t(at-b' + str(b_id) + ' ' + b_n.name() + ')\n')
 
                 for o in self.orders.values():
-                    out.write('\t(rGotFoodFor ' + str(o[0]) + ' ' + str(o[1]) + ')\n')
+                    out.write('\t(rGotFoodFor ' + o[0].name() + ' ' + o[1].name() + ')\n')
 
                 for b2 in self.bikers.keys():
                     out.write('\t(notHaveFood ' + str(b2) + ')\n')

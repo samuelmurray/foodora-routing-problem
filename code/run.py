@@ -54,10 +54,12 @@ if __name__ == '__main__':
         bikers = bikers_from_json(data)
     print("BIKERS")
     for key in bikers.keys():
-        print("Id: {id}. Location: {node}".format(id=key, node=bikers[key]))
+        print("Id: {id}. Location: {node}".format(id=key, node=bikers[key].name()))
     print("ORDERS")
     for key in orders.keys():
-        print("Id: {id}. (From, To): {nodes}".format(id=key, nodes=orders[key]))
+        print("Id: {id}. From: {from_node}, To: {to_node}".format(id=key,
+                                                                  from_node=orders[key][0].name(),
+                                                                  to_node=orders[key][1].name()))
 
     problem = Problem(graph, bikers, orders)
     problem.make_pddl()

@@ -21,8 +21,8 @@ def orders_from_json(json_data) -> Dict[int, Tuple[Node, Node]]:
     orders = {}
     keys = json_data.keys()  # type: str
     for i, key in enumerate(keys):
-        from_node = json_data[key]["from"]
-        to_node = json_data[key]["to"]
+        from_node = Node.node_by_name(json_data[key]["from"])
+        to_node = Node.node_by_name(json_data[key]["to"])
         orders[i] = (from_node, to_node)
     return orders
 
@@ -31,5 +31,5 @@ def bikers_from_json(json_data) -> Dict[int, Node]:
     bikers = {}
     keys = json_data.keys()  # type: str
     for i, key in enumerate(keys):
-        bikers[i] = (json_data[key])
+        bikers[i] = Node.node_by_name(json_data[key])
     return bikers
