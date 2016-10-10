@@ -31,6 +31,9 @@ class Graph:
         for neighbour in self.__graph_dict[node]:
             yield neighbour
 
+    def node_count(self) -> int:
+        len(self.__graph_dict)
+
     def add_node(self, node: Node):
         """ If the node "node" is not in
             self.__graph_dict, a key "node" with an empty
