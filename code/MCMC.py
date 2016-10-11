@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Oct  7 15:43:36 2016
-
-@author: Ciwan
-"""
 from graph.node import Node
 from graph.graph import Graph
 import graph.path_finder as pf
@@ -101,7 +95,6 @@ class SimulatedAnnealing:
                     move = moveSet.pop()
                     #calculate initial cost change from procedure (a) in Osman
                     costChanges, insInx = self.getCostInsDelProcedure(bikerPair, move)
-                    #print("bikerPari: ", bikerPair, "Move: ", move, "CostCh: ", costChanges)
                     delta = (self.objectiveFunction(self.costOfRoutes + costChanges) -
                              self.objectiveFunction(self.costOfRoutes))
                     theta = np.random.random()
@@ -126,7 +119,6 @@ class SimulatedAnnealing:
                         beta = ((self.Ts - self.Tf) / ((self.alpha + self.gamma * np.sqrt(k)) * self.Ts * self.Tf))
                         Tk = Tk / (1 + beta * Tk)
                         foundNewSol = True
-                        #print("Tk is: ", Tk, "beta is: ", beta)
                         break
                     else:
                         pass
@@ -234,7 +226,6 @@ class SimulatedAnnealing:
         (at least improved) TSP route using 2optProcedure."""
         b1 = bikerPair[0]
         b2 = bikerPair[1]
-        #costChange = np.zeros(self.nrBikers)
         if move[0] > -1 and move[1] > -1:
             self.__11operator(self.solution[b1],
                               self.solution[b2], move[0], move[1])
@@ -450,8 +441,6 @@ class SimulatedAnnealing:
         """Calculates the cost of travelning between 2 nodes. Once done, the 
         value is stored in a matix so A* not needed to be run again.""" 
         distance = 0.0
-        #print("From: ", start.name(), "ID: ", start.get_id(),
-        #      "To: ", goal.name(), "ID: ", goal.get_id())
         if self.costMatrix[start.get_id(), goal.get_id()] > -1:
             distance = self.costMatrix[start.get_id(), goal.get_id()]
         else:
@@ -459,17 +448,3 @@ class SimulatedAnnealing:
             self.costMatrix[start.get_id(), goal.get_id()] = distance
             self.costMatrix[goal.get_id(), start.get_id()] = distance
         return distance
-
-#if __name__ == "__main__":
-#    simulator = SimulatedAnnealing(data)
-#    simulator.runSA()
-    #   simulator.initializeSolution()
-    #    simulator.solution[0] = [(0,0), (1,0), (0,1), (1,1)]
-    #    simulator.solution[1] = [(0,2), (1,2), (0,3), (1,3)]
-    #    simulator.solution[2] = [(0,4), (1,4)]
-    #    neighbourhood = simulator.lambdaInterchange()
-    #    cost = simulator.getCostInsDelProcedure((0, 2), (0, -1))
-    #simulator.initializeSolution()
-    #simulator.initializeCoolingParameters()
-    #    for o in neighbourhood:
-    #        print(o)
