@@ -57,25 +57,31 @@ def run():
     return problem, solver
     
 def print_solution(graph:Graph):
-    print("Found solution with cost = ", solver.bestCost)
-    for index in solver.bikerStart:
-        print("Biker ", index, " starts at ", solver.bikerStart[index].name())        
+    print("Found solution with cost ={0:0.1f}".format(solver.bestCost))
     for i in solver.bikerStart:
+        biker_start = solver.bikerStart[i]
         nr_orders = len(solver.bestSolution[i])//2
+        if nr_orders == 0:
+            print("Biker", i, "does not take any orders. Is at", biker_start.name())
         for j in range (0, nr_orders):
             order_id = solver.bestSolution[i][j+1][1]
             start = solver.nodeDicts[0][order_id]
             goal = solver.nodeDicts[1][order_id]
+            path_init, cost_init = a_star_search(graph, biker_start, start)
             path, cost = a_star_search(graph, start, goal)
             #print(solver.bestSolution[i])
-            print("Biker ", i, "picks up order ", order_id,
-                  "at ", start.name(), 
-                    "and goes to customer at", 
+            print("Biker", i, "starts at", biker_start.name(),
+                  ", picks up order", order_id,
+                  "at", start.name(), "by taking route with cost = {0:0.1f}".format(cost_init)) 
+            for node_init in path_init:
+                print(node_init.name())
+            print("and goes to customer at", 
                     goal.name())
             print("Min cost to go from", start.name(), "to", goal.name(), 
-            "is", cost, ". The path is:")
+            "is {0:0.1f}".format(cost), ". The path is:")
             for node in path:
                 print(node.name())
+            biker_start = goal
     
 
 if __name__ == '__main__':
