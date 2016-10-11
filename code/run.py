@@ -50,14 +50,37 @@ def run():
 
     solver = SimulatedAnnealing(problem, True)
     solver.runSA()
-    print("Found solution: ", solver.bestSolution)
-    print("Solution cost: ", solver.bestCost)
-    print("Cost for all bikers: ", solver.bestCostOfRoutes)
-    
+    #print("Found solution: ", solver.bestSolution)
+    #print("Solution cost: ", solver.bestCost)
+    #print("Cost for all bikers: ", solver.bestCostOfRoutes)
+
     return problem, solver
+    
+def print_solution(graph:Graph):
+    print("Found solution with cost = ", solver.bestCost)
+    for index in solver.bikerStart:
+        print("Biker ", index, " starts at ", solver.bikerStart[index].name())        
+    for i in solver.bikerStart:
+        nr_orders = len(solver.bestSolution[i])//2
+        for j in range (0, nr_orders):
+            order_id = solver.bestSolution[i][j+1][1]
+            start = solver.nodeDicts[0][order_id]
+            goal = solver.nodeDicts[1][order_id]
+            path, cost = a_star_search(graph, start, goal)
+            #print(solver.bestSolution[i])
+            print("Biker ", i, "picks up order ", order_id,
+                  "at ", start.name(), 
+                    "and goes to customer at", 
+                    goal.name())
+            print("Min cost to go from", start.name(), "to", goal.name(), 
+            "is", cost, ". The path is:")
+            for node in path:
+                print(node.name())
+    
 
 if __name__ == '__main__':
     
     problem, solver = run()
+    print_solution(problem.graph())
     problem.make_pddl()
 
