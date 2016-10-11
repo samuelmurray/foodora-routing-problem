@@ -20,6 +20,7 @@ def test_astar():
     print()
     print("Min cost to go from soder to vasastan is {cost}".format(cost=cost))
 
+
 def run():
     with open("data/graph.json") as data_file:
         data = json.load(data_file)

@@ -112,14 +112,12 @@ class SimulatedAnnealing:
                         self.updateSolution(bikerPair, move, insInx)
                         newCost = self.objectiveFunction(self.costOfRoutes)
                         if newCost < self.bestCost:
-                            print("Found new best")
                             self.bestSolution = copy.deepcopy(self.solution)
                             self.bestCost = float(newCost)
                             self.bestCostOfRoutes = copy.deepcopy(self.costOfRoutes)
                             self.Tb = Tk
                             if self.savePlotData:
                                 self.bestCostData.append((newCost, k))
-                            print("Found new best")
                             nrResets = 0
                             nrZeroCosts = 0
                         else:
@@ -227,7 +225,7 @@ class SimulatedAnnealing:
         self.gamma = self.nrOrders
     
     def objectiveFunction(self, routeCosts: np.ndarray) -> float:
-        """The objective function. May be max of sum."""
+        """The objective function. May be amax or sum."""
         return np.amax(routeCosts)
 
     def updateSolution(self, bikerPair: Tuple[int, int],
