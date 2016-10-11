@@ -24,10 +24,10 @@ def run():
     with open("data/graph.json") as data_file:
         data = json.load(data_file)
         graph = graph_from_json(data)
-    with open("data/orders.json") as data_file:
+    with open("data/orders15.json") as data_file:
         data = json.load(data_file)
         orders = orders_from_json(data)
-    with open("data/bikers.json") as data_file:
+    with open("data/bikers10.json") as data_file:
         data = json.load(data_file)
         bikers = bikers_from_json(data)
     print("GRAPH")
