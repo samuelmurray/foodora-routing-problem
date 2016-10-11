@@ -1,0 +1,34 @@
+{
+  "soder": {
+    "x": 5,
+    "y": 3,
+    "neighbours": [
+      "gamlastan"
+    ]
+  },
+  "gamlastan": {
+    "x": 2,
+    "y": 1,
+    "neighbours": [
+      "soder",
+      "vasastan",
+      "ostermalm"
+    ]
+  },
+  "vasastan": {
+    "x": 5,
+    "y": 1,
+    "neighbours": [
+      "gamlastan",
+      "ostermalm"
+    ]
+  },
+  "ostermalm": {
+    "x": 1,
+    "y": 4,
+    "neighbours": [
+      "vasastan",
+      "gamlastan"
+    ]
+  }
+}

@@ -22,13 +22,13 @@ def test_astar():
 
 
 if __name__ == '__main__':
-    with open("data/graph.json") as data_file:
+    with open("data/graphT.json") as data_file:
         data = json.load(data_file)
         graph = graph_from_json(data)
-    with open("data/orders.json") as data_file:
+    with open("data/ordersT.json") as data_file:
         data = json.load(data_file)
         orders = orders_from_json(data)
-    with open("data/bikers.json") as data_file:
+    with open("data/bikersT.json") as data_file:
         data = json.load(data_file)
         bikers = bikers_from_json(data)
     print("GRAPH")
