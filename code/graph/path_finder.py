@@ -42,6 +42,8 @@ def __search(graph: Graph, start: Node, goal: Node):
             if next_node not in cost_so_far or new_cost < cost_so_far[next_node]:
                 cost_so_far[next_node] = new_cost
                 priority = new_cost + distance(goal, next_node)
+#                print("Priority: ", priority)
+#                print("next_node: ", next_node.name())
                 frontier.put(next_node, priority)
                 came_from[next_node] = current
 
