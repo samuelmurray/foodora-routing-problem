@@ -20,8 +20,7 @@ def test_astar():
     print()
     print("Min cost to go from soder to vasastan is {cost}".format(cost=cost))
 
-
-if __name__ == '__main__':
+def run():
     with open("data/graph.json") as data_file:
         data = json.load(data_file)
         graph = graph_from_json(data)
@@ -45,7 +44,7 @@ if __name__ == '__main__':
         print("Id: {id}. From: {from_node}, To: {to_node}".format(id=key,
                                                                   from_node=orders[key][0].name(),
                                                                   to_node=orders[key][1].name()))
-    
+    print("-------------\n")
     problem = Problem(graph, bikers, orders)
 
     solver = SimulatedAnnealing(problem, True)
@@ -54,5 +53,10 @@ if __name__ == '__main__':
     print("Solution cost: ", solver.bestCost)
     print("Cost for all bikers: ", solver.bestCostOfRoutes)
     
+    return problem, solver
+
+if __name__ == '__main__':
+    
+    problem, solver = run()
     problem.make_pddl()
 

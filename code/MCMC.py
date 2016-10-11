@@ -452,8 +452,8 @@ class SimulatedAnnealing:
         """Calculates the cost of travelning between 2 nodes. Once done, the 
         value is stored in a matix so A* not needed to be run again.""" 
         distance = 0.0
-        print("From: ", start.name(), "ID: ", start.get_id(),
-              "To: ", goal.name(), "ID: ", goal.get_id())
+        #print("From: ", start.name(), "ID: ", start.get_id(),
+        #      "To: ", goal.name(), "ID: ", goal.get_id())
         if self.costMatrix[start.get_id(), goal.get_id()] > -1:
             distance = self.costMatrix[start.get_id(), goal.get_id()]
         else:
