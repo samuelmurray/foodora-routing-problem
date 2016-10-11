@@ -1,0 +1,62 @@
+{
+  "1": {
+    "from": "slussen",
+    "to": "sickla"
+  },
+  "2": {
+    "from": "langholmen",
+    "to": "gardet"
+  },
+  "3": {
+    "from": "bromma",
+    "to": "lillaessingen"
+  },
+  "4": {
+    "from": "alsten",
+    "to": "aspudden"
+  },
+  "5": {
+    "from": "liljeholmen",
+    "to": "traneberg"
+  },
+  "6": {
+    "from": "storaessingen",
+    "to": "alvsjo"
+  },
+  "7": {
+    "from": "vastertorp",
+    "to": "sickla"
+  },  
+  "8": {
+    "from": "sofia",
+    "to": "storaessingen"
+  },
+  "9": {
+    "from": "traneberg",
+    "to": "djurgarden"
+  },
+  "10": {
+    "from": "gamlastan",
+    "to": "slussen"
+  },
+  "11": {
+    "from": "slussen",
+    "to": "hagersten"
+  },
+  "12": {
+    "from": "alvsjo",
+    "to": "vastertorp"
+  },
+  "13": {
+    "from": "hjorthagen",
+    "to": "ostermalm"
+  },
+  "14": {
+    "from": "ostermalm",
+    "to": "sickla"
+  },
+  "15": {
+    "from": "storaessingen",
+    "to": "gardet"
+  }              
+}
