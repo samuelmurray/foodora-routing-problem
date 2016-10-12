@@ -221,7 +221,7 @@ class SimulatedAnnealing:
         self.gamma = self.nrOrders
     
     def objectiveFunction(self, routeCosts: np.ndarray) -> float:
-        """The objective function. May be amax or sum."""
+        """The objective function. May be np.amax or np.sum."""
         return np.amax(routeCosts)
 
     def updateSolution(self, bikerPair: Tuple[int, int],
