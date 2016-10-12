@@ -19,29 +19,6 @@ class Problem:
     def orders(self):
         return self.__orders
 
-    # This code is maybe not needed, since one can get the same information from orders.
-    """
-    def restaurants(self):
-        return self.__restaurants
-
-    def customers(self):
-        return self.__customers
-
-    @staticmethod
-    def make_restaurants_list(orders: Dict[int, Tuple[Node, Node]]):
-        restaurants = {}
-        for i, key in enumerate(orders.keys()):
-            restaurants[i] = orders[key][0]
-        return restaurants
-
-    @staticmethod
-    def make_customer_list(orders: Dict[int, Tuple[Node, Node]]):
-        customers = {}
-        for i, key in enumerate(orders.keys()):
-            customers[i] = orders[key][1]
-        return customers
-    """
-
     def make_pddl(self):
         with open('data/pddl_init.ppdl', 'w') as out:
             out.write('(define (problem test_problem_cost)\n\t(:domain foodora_cost_domain)\n\t(:objects\t')
@@ -84,6 +61,3 @@ class Problem:
             for key in self.__orders.keys():
                 out.write(' (gotFood c' + str(key) + ')')
             out.write('))\n\n\t(:metric minimize (total-cost))\n\t)')
-
-        '''TODO? def read_pddl_solution():
-        '''

@@ -1,0 +1,42 @@
+{
+   "vasastaden": {
+    "x": 10,
+    "y": 2,
+    "neighbours": [
+      "norrmalm",
+      "ostermalm"
+    ]
+  },
+  "ostermalm": {
+    "x": 13,
+    "y": 4,
+    "neighbours": [
+      "norrmalm",
+      "vasastaden"
+    ]
+  },
+  "norrmalm": {
+    "x": 11,
+    "y": 5,
+    "neighbours": [
+      "ostermalm",
+      "vasastaden",
+      "gamlastan"
+    ]
+  },
+  "gamlastan": {
+    "x": 12,
+    "y": 6,
+    "neighbours": [
+      "norrmalm",
+      "slussen"
+    ]
+  },
+  "slussen": {
+    "x": 12,
+    "y": 7,
+    "neighbours": [
+      "gamlastan"
+    ]
+  }
+}

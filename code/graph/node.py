@@ -6,7 +6,6 @@ from typing import List, Dict, Tuple
 
 
 class Node:
-    # TODO: It might be unnecessary to have both ID and name for nodes - might lead to confusion. Choose one?
     __nodes = []  # type: List[Node]
     __name_to_node = {}  # type: Dict[str, Node]
 
