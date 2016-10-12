@@ -56,6 +56,11 @@ def run():
     
     return problem, solver
 
+def runJustSA(problem):
+    solver = SimulatedAnnealing(problem, True)
+    solver.runSA()
+    return solver
+    
 if __name__ == '__main__':
     
     problem, solver = run()

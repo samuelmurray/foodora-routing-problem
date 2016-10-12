@@ -56,7 +56,7 @@ class SimulatedAnnealing:
             self.bestCostData = []
             self.tempData = []
 
-    def runSA(self, R=3, zeroCostR = 10) -> None:
+    def runSA(self, R=3, zeroCostR = 200, kmax = np.inf) -> None:
         """Runs the entire simulated annealing algorithm. All sub-functions 
         assumes R, C pairs.
         
@@ -77,8 +77,12 @@ class SimulatedAnnealing:
         self.initializeCoolingParameters()
         k = 1
         Tk = self.Ts
+        if self.savePlotData:
+           self.costData.append(self.objectiveFunction(self.costOfRoutes))
+           self.tempData.append(float(Tk))
+           self.bestCostData.append((self.bestCost, k))
         #Run cycles until R resets
-        while nrResets < R:
+        while nrResets < R and k < kmax:
             foundNewSol = False
             self.searchOrder = np.random.permutation(self.searchOrder)
             # The the lambda-interchange, neighbourhood. lambda = 1 assumes
@@ -88,8 +92,8 @@ class SimulatedAnnealing:
                 moveSet = set(neighbourhood[n])
                 nrMoves = len(moveSet)
                 #Break if we are stuck
-                if nrZeroCosts > zeroCostR:
-                    nrResets += 1
+                if nrZeroCosts > zeroCostR and kmax == np.inf:
+                    nrZeroCosts = 0
                     break
                 for m in range(nrMoves):
                     move = moveSet.pop()
