@@ -57,7 +57,7 @@ def run():
     return problem, solver
     
 def print_solution(graph:Graph):
-    print("Found solution with cost ={0:0.1f}".format(solver.bestCost))
+    print("Found solution with cost = {0:0.1f}".format(solver.bestCost))
     for i in solver.bikerStart:
         biker_start = solver.bikerStart[i]
         nr_orders = len(solver.bestSolution[i])//2
@@ -76,9 +76,9 @@ def print_solution(graph:Graph):
             for node_init in path_init:
                 print(node_init.name())
             print("and goes to customer at", 
-                    goal.name())
-            print("Min cost to go from", start.name(), "to", goal.name(), 
-            "is {0:0.1f}".format(cost), ". The path is:")
+                    goal.name(), ". Min cost to go from", start.name(), 
+                    "to", goal.name(), 
+            "is {0:0.1f}".format(cost), ". \nThe path is:")
             for node in path:
                 print(node.name())
             biker_start = goal
