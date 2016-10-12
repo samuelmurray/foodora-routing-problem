@@ -1,24 +1,8 @@
-from graph.graph import Graph
 from json_parser import *
-from graph.node import Node
 from graph.path_finder import *
 from problem import Problem
 import json
 from MCMC import SimulatedAnnealing
-
-
-def test_astar():
-    with open("data/graph.json") as data_file:
-        data = json.load(data_file)
-        graph = graph_from_json(data)
-    print(graph)
-    start = Node.node_by_name("soder")
-    goal = Node.node_by_name("vasastan")
-    path, cost = a_star_search(graph, start, goal)
-    for node in path:
-        print(node)
-    print()
-    print("Min cost to go from soder to vasastan is {cost}".format(cost=cost))
 
 
 def run():
@@ -55,8 +39,9 @@ def run():
     #print("Cost for all bikers: ", solver.bestCostOfRoutes)
 
     return problem, solver
-    
-def print_solution(graph:Graph):
+
+
+def print_solution(graph: Graph):
     print("Found solution with cost = {0:0.1f}".format(solver.bestCost))
     for i in solver.bikerStart:
         biker_start = solver.bikerStart[i]

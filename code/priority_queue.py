@@ -13,10 +13,10 @@ class PriorityQueue:
         return len(self.elements) == 0
 
     def put(self, item, priority) -> None:
-        """push to heap, but avoid items with same priority."""
         if len([element for element in self.elements if element[0] == priority]) == 0:
             heapq.heappush(self.elements, (priority, item))
         else:
+            # Identical values can not be in the heap. Decrement the value by epsilon.
             self.put(item, priority - 0.00001)
 
     def get(self):

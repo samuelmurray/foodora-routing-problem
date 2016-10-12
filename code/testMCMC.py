@@ -1,6 +1,4 @@
-from graph.graph import Graph
 from json_parser import *
-from graph.node import Node
 from graph.path_finder import *
 from problem import Problem
 import json
@@ -51,7 +49,7 @@ if __name__ == '__main__':
     with open("data/orders.json") as data_file:
         data = json.load(data_file)
         orders = orders_from_json(data)
-    with open("data/bikers.json") as data_file:
+    with open("data/bikers3.json") as data_file:
         data = json.load(data_file)
         bikers = bikers_from_json(data)
     print("BIKERS")
