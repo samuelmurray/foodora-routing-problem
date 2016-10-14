@@ -1,3 +1,5 @@
+""" Functions to parse the json files and generate correct data structures """
+
 from graph.graph import Graph
 from graph.node import Node
 from typing import Dict, Tuple

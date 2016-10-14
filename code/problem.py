@@ -1,3 +1,5 @@
+""" A data class containing all the information about the problem, initial conditions etc. """
+
 from typing import Dict, Tuple
 from graph.graph import Graph
 from graph.node import Node

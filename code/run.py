@@ -1,3 +1,5 @@
+""" Main file to run the different algorithms """
+
 from json_parser import *
 from graph.path_finder import *
 from problem import Problem
@@ -37,7 +39,6 @@ def run():
     #print("Found solution: ", solver.bestSolution)
     #print("Solution cost: ", solver.bestCost)
     #print("Cost for all bikers: ", solver.bestCostOfRoutes)
-
     return problem, solver
 
 
@@ -73,10 +74,10 @@ def runJustSA(problem):
     solver = SimulatedAnnealing(problem, True)
     solver.runSA()
     return solver
-    
+
+
 if __name__ == '__main__':
     
     problem, solver = run()
     print_solution(problem.graph())
     problem.make_pddl()
-

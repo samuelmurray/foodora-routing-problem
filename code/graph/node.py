@@ -1,4 +1,5 @@
 """
+Class representing nodes in the graph.
 Each node has coordinates which can be used to calculate length of edges.
 """
 

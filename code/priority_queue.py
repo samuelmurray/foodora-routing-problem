@@ -1,5 +1,6 @@
 """
 Courtesy of http://www.redblobgames.com/pathfinding/a-star/implementation.html
+A heap to store the nodes in A* search. Added fix for identical values.
 """
 
 import heapq

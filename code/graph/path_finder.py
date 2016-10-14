@@ -1,3 +1,5 @@
+""" Functions to find shortest path in our graph """
+
 import math
 from typing import List
 from graph.node import Node
@@ -15,6 +17,7 @@ def distance(node1: Node, node2: Node) -> float:
 
 """
 Courtesy of http://www.redblobgames.com/pathfinding/a-star/implementation.html
+Updated to work for our graph class
 """
 
 

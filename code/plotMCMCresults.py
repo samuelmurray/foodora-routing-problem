@@ -1,3 +1,5 @@
+""" Functions to plot graphs of the SimAnn solution """
+
 import matplotlib.pyplot as plt
 import numpy as np
 import run
