@@ -219,7 +219,8 @@ class SimulatedAnnealing:
 
     def objectiveFunction(self, routeCosts: np.ndarray) -> float:
         """The objective function. May be np.amax or np.sum."""
-        return np.amax(routeCosts)
+        return self.nrBikers*np.amax(routeCosts) + np.sum(routeCosts)
+        #return np.sum(routeCosts)
 
     def updateSolution(self, bikerPair: Tuple[int, int], move: Tuple[int, int], insInx: int) -> None:
         """Updates the solutions with 01, 10 and 11 operators. Finds "optimal"

@@ -19,7 +19,7 @@ for i in range(len(tableau20)):
     tableau20[i] = (r / 255., g / 255., b / 255.)
 plt.style.use('./myReportStyle.mplstyle')
 # plt.style.use('ciwans-report')
-sufix = "_smth"
+sufix = "_mix"
 plt.ioff()
 fig1 = plt.figure()
 ax1 = plt.subplot(111)
@@ -61,4 +61,18 @@ for solver in solvers:
     plt.tight_layout(pad=0.5)
     plt.savefig("tempPlot" + sufix + ".pdf")
     s += 1
+    
+solver1.bestCostOfRoutes.sort()   
+solver2.bestCostOfRoutes.sort()
+solver3.bestCostOfRoutes.sort()
+ind = np.arange(10) 
+vector = (solver1.bestCostOfRoutes + solver2.bestCostOfRoutes + solver3.bestCostOfRoutes)*(1./3.)
+vector = vector[::-1]
+fig3 = plt.figure()
+ax3 = plt.subplot(111)
+rect = ax3.bar(ind, vector, color = tableau20[0], alpha=0.9)
+ax3.set_ylabel('Route Cost')
+ax3.set_xlabel("Sorted Biker Index")
+plt.tight_layout(pad=0.5)
+plt.savefig("solHisto" + sufix + ".pdf")
 plt.show()
