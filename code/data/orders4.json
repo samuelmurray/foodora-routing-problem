@@ -1,0 +1,18 @@
+{
+  "1": {
+    "from": "slussen",
+    "to": "sickla"
+  },
+  "2": {
+    "from": "langholmen",
+    "to": "gardet"
+  },
+  "3": {
+    "from": "bromma",
+    "to": "lillaessingen"
+  },
+  "4": {
+    "from": "alsten",
+    "to": "aspudden"
+  }             
+}
